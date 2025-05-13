@@ -10,7 +10,6 @@ import (
 var DB *sql.DB
 
 func InitDB() {
-    // Replace these with your actual PostgreSQL credentials
     const (
         host     = "localhost"
         port     = 5432
@@ -39,5 +38,5 @@ func InitDB() {
         panic(err)
     }
 
-    fmt.Println("✅ Connected to the database!")
+    fmt.Println("connected to the database!")
 }
