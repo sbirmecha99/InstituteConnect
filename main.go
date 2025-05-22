@@ -1,18 +1,15 @@
 package main
 
 import (
-	"instituteconnect/auth"
 	"instituteconnect/config"
 	"instituteconnect/models"
+	"instituteconnect/routes"
+
 
 	"log"
-	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/gorilla/pat"
-	"github.com/markbates/goth/gothic"
-
-
 )
 
 func main() {
@@ -34,47 +31,10 @@ func main() {
 	}
 	log.Println("migration successful!")
 
-	// Init Google OAuth
-	auth.Init() // You define this in auth/google.go
+	app := fiber.New()
 
-	// Setup routes
-	r := pat.New()
+	routes.SetupRoutes(app)
 
-	// Start Google OAuth
-	r.Get("/auth/{provider}", func(w http.ResponseWriter, r *http.Request) {
-		gothic.BeginAuthHandler(w, r)
-	})
+	log.Fatal(app.Listen(":3000"))
 
-	// Handle callback after login
-	r.Get("/auth/{provider}/callback", func(w http.ResponseWriter, r *http.Request) {
-		user, err := gothic.CompleteUserAuth(w, r)
-		if err != nil {
-			http.Redirect(w, r, "/auth/google", http.StatusTemporaryRedirect)
-			return
-		}
-
-		// 🧠 Check if user exists in DB, otherwise create
-		var existing models.User
-		result := config.DB.Where("email = ?", user.Email).First(&existing)
-
-		if result.Error != nil {
-			// New user — create it
-			newUser := models.User{
-				Name:     user.Name,
-				Email:    user.Email,
-				GoogleID: user.UserID,
-				Role:     models.Student, // or default to Student, change as needed
-			}
-			config.DB.Create(&newUser)
-			log.Println("New user created:", newUser.Email)
-		} else {
-			log.Println("User already exists:", existing.Email)
-		}
-
-		// You can return a success message or redirect to a dashboard
-		w.Write([]byte("Logged in as: " + user.Email))
-	})
-
-	log.Println("Server started on http://localhost:3000")
-	http.ListenAndServe(":3000", r)
 }
