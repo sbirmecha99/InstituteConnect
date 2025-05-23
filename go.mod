@@ -16,6 +16,9 @@ require (
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/go-chi/chi/v5 v5.1.0 // indirect
 	github.com/gofiber/fiber/v2 v2.52.8 // indirect
+	github.com/gofiber/template v1.8.3 // indirect
+	github.com/gofiber/template/html/v2 v2.1.3 // indirect
+	github.com/gofiber/utils v1.1.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
