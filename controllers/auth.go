@@ -163,3 +163,40 @@ func Register(c *fiber.Ctx) error {
 	return c.Redirect("/")
 
 }
+
+//email password login
+
+func EmailPasswordLogin(c *fiber.Ctx)error{
+	var input struct{
+		Email string `form:"email"`
+		Password string `form:"password"`
+	}
+	if err:= c.BodyParser(&input);err!=nil{
+		return c.Status(fiber.StatusBadRequest).SendString("invalid input")
+	}
+
+	var user models.User
+	result:=config.DB.Where("email = ?",input.Email).First(&user)
+	if result.RowsAffected==0||user.Password==""{
+		return c.Status(fiber.StatusUnauthorized).SendString("user not found")
+	}
+
+	if !utils.CheckPasswordHash(input.Password, user.Password) {
+    return c.Status(fiber.StatusUnauthorized).SendString("incorrect password")
+}
+
+	//generate jwt
+	token,err:= utils.GenerateJWT(user.Email,string(user.Role))
+	if err!=nil{
+		return c.Status(fiber.StatusInternalServerError).SendString("failed to generate token")
+	}
+	//redircet or send token
+	c.Cookie(&fiber.Cookie{
+		Name: "token",
+		Value: token,
+		HTTPOnly: true,
+		Path: "/",
+	})
+
+	return c.Redirect("/dashboard")
+}

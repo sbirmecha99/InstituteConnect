@@ -20,13 +20,23 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/dashboard", middleware.JWTProtected(), func(c *fiber.Ctx) error {
     return c.Render("dashboard", fiber.Map{})
 })
-	//dashboard route after login
+
+//signup.html
+app.Get("/signup",func(c *fiber.Ctx)error{
+	return c.Render("signup",fiber.Map{})
+})
+
+app.Post("/auth/register",controllers.Register)
+
+app.Post("/auth/login",controllers.EmailPasswordLogin)
+
+	/*//dashboard route after login
 	 app.Get("/dashboard", func(c *fiber.Ctx) error {
         return c.Render("dashboard", fiber.Map{})
     })	
 
 	// Example protected route
-	app.Get("/dashboard", controllers.Protected)
+	app.Get("/dashboard", controllers.Protected)*/
 
 
 }
