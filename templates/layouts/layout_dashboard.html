@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ .Title }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/profile">Profile</a>
+        <a href="/rooms">Rooms</a>
+        <a href="/notifications">Notifications</a>
+        <a href="/requests">Requests</a>
+    </nav>
+
+    <main>
+        {{ embed }} <!-- This renders role-specific content -->
+    </main>
+</body>
+</html>

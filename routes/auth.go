@@ -17,9 +17,22 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/auth/google", controllers.GoogleLogin)
 	app.Get("/auth/google/callback", controllers.GoogleCallback)
 
-	app.Get("/dashboard", middleware.JWTProtected(), func(c *fiber.Ctx) error {
-    return c.Render("dashboard", fiber.Map{})
+	app.Get("/dashboard/student", middleware.JWTProtected(), func(c *fiber.Ctx) error {
+	return c.Render("student_dashboard", fiber.Map{})
 })
+
+app.Get("/dashboard/professor", middleware.JWTProtected(), func(c *fiber.Ctx) error {
+	return c.Render("professor_dashboard", fiber.Map{})
+})
+
+app.Get("/dashboard/hod", middleware.JWTProtected(), func(c *fiber.Ctx) error {
+	return c.Render("hod_dashboard", fiber.Map{})
+})
+
+app.Get("/dashboard/admin", middleware.JWTProtected(), func(c *fiber.Ctx) error {
+	return c.Render("dean_dashboard", fiber.Map{})
+})
+
 
 //signup.html
 app.Get("/signup",func(c *fiber.Ctx)error{

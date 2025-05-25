@@ -73,21 +73,19 @@ func GoogleCallback(c *fiber.Ctx) error {
 
 	if result.RowsAffected == 0 {
 		
-		//creating user with default role "student"
+		//creating user
+		userRole:=utils.DetermineRole(googleUser.Email)
 		user = models.User{
 			Name:     googleUser.Name,
 			Email:    googleUser.Email,
 			GoogleID: googleUser.ID,
-			Role:     models.Student,
+			Role:     models.Role(userRole),
 		}
 		config.DB.Create(&user)
-		/* err := config.DB.Create(&user).Error; err != nil {
-			log.Println("error creating user:", err)
-			return c.SendStatus(http.StatusInternalServerError)
-		}*/
+		
 	}else{
 		if user.GoogleID==""{
-			user.GoogleID=user.GoogleID
+			user.GoogleID=googleUser.ID
 			config.DB.Save(&user)
 		}
 	}
@@ -104,7 +102,8 @@ func GoogleCallback(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   true,
 	})
-	return c.Redirect("/dashboard")
+	return c.Redirect(utils.DashboardRedirect(string(user.Role)))
+
 }
 
 // email-password login
@@ -154,7 +153,7 @@ func Register(c *fiber.Ctx) error {
 	user:= models.User{
 		Email: input.Email,
 		Password: hashed,
-		Role: models.Student,
+		Role: models.Role(utils.DetermineRole(input.Email)),
 	}
  	
 	if err:= config.DB.Create(&user).Error;err!=nil{
@@ -198,5 +197,6 @@ func EmailPasswordLogin(c *fiber.Ctx)error{
 		Path: "/",
 	})
 
-	return c.Redirect("/dashboard")
+	return c.Redirect(utils.DashboardRedirect(string(user.Role)))
+
 }
