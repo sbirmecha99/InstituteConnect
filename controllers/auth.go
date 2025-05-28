@@ -67,14 +67,19 @@ func GoogleCallback(c *fiber.Ctx) error {
 		return c.SendStatus(http.StatusInternalServerError)
 	}
 
+	// insti mail check
+	if !strings.HasSuffix(googleUser.Email, "@nitdgp.ac.in") {
+		return c.Status(fiber.StatusForbidden).SendString("Only @nitdgp.ac.in emails allowed")
+	}
+
 	//if user already exists or not
 	var user models.User
 	result := config.DB.Where("google_id = ? OR email = ?", googleUser.ID, googleUser.Email).First(&user)
 
 	if result.RowsAffected == 0 {
-		
+
 		//creating user
-		userRole:=utils.DetermineRole(googleUser.Email)
+		userRole := utils.DetermineRole(googleUser.Email)
 		user = models.User{
 			Name:     googleUser.Name,
 			Email:    googleUser.Email,
@@ -82,10 +87,10 @@ func GoogleCallback(c *fiber.Ctx) error {
 			Role:     models.Role(userRole),
 		}
 		config.DB.Create(&user)
-		
-	}else{
-		if user.GoogleID==""{
-			user.GoogleID=googleUser.ID
+
+	} else {
+		if user.GoogleID == "" {
+			user.GoogleID = googleUser.ID
 			config.DB.Save(&user)
 		}
 	}
@@ -102,13 +107,15 @@ func GoogleCallback(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   true,
 	})
-	return c.Redirect(utils.DashboardRedirect(string(user.Role)))
+	return c.Redirect("/dashboard")
+
 
 }
 
-// email-password login
+// register
 func Register(c *fiber.Ctx) error {
 	var input struct {
+		Name            string `form:"fullname"`
 		Email           string `form:"email"`
 		Password        string `form:"password"`
 		ConfirmPassword string `form:"confirmPassword"`
@@ -129,34 +136,35 @@ func Register(c *fiber.Ctx) error {
 	result := config.DB.Where("email = ?", input.Email).First(&existing)
 
 	if result.RowsAffected > 0 {
-		if existing.Password!=""{
+		if existing.Password != "" {
 			//normal login already done
 			return c.Status(fiber.StatusBadRequest).SendString("email already in use")
-		}else{
+		} else {
 			//already registered via google, now setting password
 			hashed, err := utils.HashPassword(input.Password)
 			if err != nil {
 				return c.Status(fiber.StatusInternalServerError).SendString("could not hash password")
 			}
 			existing.Password = hashed
-		if err := config.DB.Save(&existing).Error; err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString("Failed to update password")
+			if err := config.DB.Save(&existing).Error; err != nil {
+				return c.Status(fiber.StatusInternalServerError).SendString("Failed to update password")
+			}
+			return c.Redirect("/") // password set
 		}
-		return c.Redirect("/") // password set
 	}
-}
-//new user
-	hashed,err:=utils.HashPassword(input.Password)
-	if err!=nil{
+	//new user
+	hashed, err := utils.HashPassword(input.Password)
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("could not hash password")
 	}
-	user:= models.User{
-		Email: input.Email,
+	user := models.User{
+		Name:     input.Name,
+		Email:    input.Email,
 		Password: hashed,
-		Role: models.Role(utils.DetermineRole(input.Email)),
+		Role:     models.Role(utils.DetermineRole(input.Email)),
 	}
- 	
-	if err:= config.DB.Create(&user).Error;err!=nil{
+
+	if err := config.DB.Create(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("failed to register user :(")
 	}
 	return c.Redirect("/")
@@ -165,38 +173,39 @@ func Register(c *fiber.Ctx) error {
 
 //email password login
 
-func EmailPasswordLogin(c *fiber.Ctx)error{
-	var input struct{
-		Email string `form:"email"`
+func EmailPasswordLogin(c *fiber.Ctx) error {
+	var input struct {
+		Email    string `form:"email"`
 		Password string `form:"password"`
 	}
-	if err:= c.BodyParser(&input);err!=nil{
+	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString("invalid input")
 	}
 
 	var user models.User
-	result:=config.DB.Where("email = ?",input.Email).First(&user)
-	if result.RowsAffected==0||user.Password==""{
+	result := config.DB.Where("email = ?", input.Email).First(&user)
+	if result.RowsAffected == 0 || user.Password == "" {
 		return c.Status(fiber.StatusUnauthorized).SendString("user not found")
 	}
 
 	if !utils.CheckPasswordHash(input.Password, user.Password) {
-    return c.Status(fiber.StatusUnauthorized).SendString("incorrect password")
-}
+		return c.Status(fiber.StatusUnauthorized).SendString("incorrect password")
+	}
 
 	//generate jwt
-	token,err:= utils.GenerateJWT(user.Email,string(user.Role))
-	if err!=nil{
+	token, err := utils.GenerateJWT(user.Email, string(user.Role))
+	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("failed to generate token")
 	}
 	//redircet or send token
 	c.Cookie(&fiber.Cookie{
-		Name: "token",
-		Value: token,
+		Name:     "token",
+		Value:    token,
 		HTTPOnly: true,
-		Path: "/",
+		Path:     "/",
 	})
 
-	return c.Redirect(utils.DashboardRedirect(string(user.Role)))
+	return c.Redirect("/dashboard")
+
 
 }

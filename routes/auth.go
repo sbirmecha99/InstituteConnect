@@ -3,7 +3,7 @@ package routes
 import (
 	"instituteconnect/controllers"
 	"instituteconnect/middleware"
-
+	"instituteconnect/models"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,22 +17,26 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/auth/google", controllers.GoogleLogin)
 	app.Get("/auth/google/callback", controllers.GoogleCallback)
 
-	app.Get("/dashboard/student", middleware.JWTProtected(), func(c *fiber.Ctx) error {
-	return c.Render("student_dashboard", fiber.Map{})
-})
+app.Get("/dashboard", middleware.JWTProtected(), func(c *fiber.Ctx) error {
+    userInterface := c.Locals("user")
+user, ok := userInterface.(models.User)
+if !ok {
+    return c.Status(fiber.StatusUnauthorized).SendString("User not found or invalid type")
+}
 
-app.Get("/dashboard/professor", middleware.JWTProtected(), func(c *fiber.Ctx) error {
-	return c.Render("professor_dashboard", fiber.Map{})
+    switch user.Role {
+    case "SuperAdmin":
+        return c.Render("dashboard/dean", fiber.Map{"User": user})
+    case "Admin":
+        return c.Render("dashboard/hod", fiber.Map{"User": user})
+    case "Prof":
+        return c.Render("dashboard/professor", fiber.Map{"User": user})
+    case "Student":
+        return c.Render("dashboard/student", fiber.Map{"User": user})
+    default:
+        return c.Status(fiber.StatusForbidden).SendString("Invalid role")
+    }
 })
-
-app.Get("/dashboard/hod", middleware.JWTProtected(), func(c *fiber.Ctx) error {
-	return c.Render("hod_dashboard", fiber.Map{})
-})
-
-app.Get("/dashboard/admin", middleware.JWTProtected(), func(c *fiber.Ctx) error {
-	return c.Render("dean_dashboard", fiber.Map{})
-})
-
 
 //signup.html
 app.Get("/signup",func(c *fiber.Ctx)error{
@@ -51,6 +55,4 @@ app.Post("/auth/login",controllers.EmailPasswordLogin)
 	// Example protected route
 	app.Get("/dashboard", controllers.Protected)*/
 
-
 }
-

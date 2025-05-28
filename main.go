@@ -10,7 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
-	
 )
 
 func main() {
@@ -49,9 +48,8 @@ func main() {
 	routes.SetupRoutes(app)
 
 	app.Get("/dashboard", func(c *fiber.Ctx) error {
-    return c.Render("dashboard", fiber.Map{}) // make sure dashboard.html is in templates/
-})
-
+		return c.Render("dashboard", fiber.Map{})
+	})
 
 	log.Println("[debug]starting server on 3000")
 

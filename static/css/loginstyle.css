@@ -49,6 +49,15 @@ body,html{
     align-items: flex-start;
     width: 100%;
 }
+input[type="fullname"] {
+    width: 90%; 
+    padding: 0.8rem;
+    margin-top: 0.3rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1em;
+}
 input[type="email"] {
     width: 90%; 
     padding: 0.8rem;
@@ -67,6 +76,7 @@ input[type="password"] {
     border: 1px solid #ddd;
     font-size: 1em;
 }
+
 label {
     font-size: 1em;
     color: #d7d9d9;

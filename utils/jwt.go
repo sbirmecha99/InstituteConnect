@@ -21,7 +21,7 @@ func GenerateJWT(email string, role string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func ValidateJWT(tokenStr string) (*jwt.Token, error) {
+func ValidateJWT(tokenStr string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		// Validate signing method here if needed
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -33,5 +33,5 @@ func ValidateJWT(tokenStr string) (*jwt.Token, error) {
 	if err != nil || !token.Valid {
 		return nil, err
 	}
-	return token, nil
+	return token.Claims.(jwt.MapClaims),nil
 }
