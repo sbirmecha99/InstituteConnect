@@ -18,25 +18,31 @@ func main() {
 	if err != nil {
 		log.Fatal("error loading env file")
 	}
+
 	config.ConnectDatabase()
 
 	error1 := config.DB.AutoMigrate(
 		&models.User{},
 		&models.Room{},
+		&models.RoomSchedule{},
 		&models.Appointment{},
 		&models.Notification{},
 	)
+
 	if error1 != nil {
 		log.Fatal("automigration failure: ", error1)
 	}
 	log.Println("migration successful!")
+
 
 	// Set up HTML templates
 	engine := html.New("./templates", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
-
+	//user routes
+	routes.UserRoutes(app)
+	
 	// Serve static files (like CSS)
 	app.Static("/static", "./static")
 
@@ -45,6 +51,7 @@ func main() {
 		return c.Render("login", fiber.Map{})
 	})
 	log.Println("[debug]setting up routes")
+
 	routes.SetupRoutes(app)
 
 	app.Get("/dashboard", func(c *fiber.Ctx) error {

@@ -28,4 +28,5 @@ func ConnectDatabase() {
 	}
 
 	log.Println("connected to PostgreSQL database")
+
 }

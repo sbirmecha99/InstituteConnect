@@ -17,6 +17,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/auth/google", controllers.GoogleLogin)
 	app.Get("/auth/google/callback", controllers.GoogleCallback)
 
+    //middleware protection
 app.Get("/dashboard", middleware.JWTProtected(), func(c *fiber.Ctx) error {
     userInterface := c.Locals("user")
 user, ok := userInterface.(models.User)
@@ -52,7 +53,7 @@ app.Post("/auth/login",controllers.EmailPasswordLogin)
         return c.Render("dashboard", fiber.Map{})
     })	
 
-	// Example protected route
+	//protected route
 	app.Get("/dashboard", controllers.Protected)*/
 
 }
