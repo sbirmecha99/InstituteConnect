@@ -12,3 +12,11 @@ func UserRoutes(app *fiber.App) {
 	group.Put("/:id", handlers.UpdateUser)
 	group.Delete("/:id", handlers.DeleteUser)
 }
+func RoomRoutes(app *fiber.App) {
+	group := app.Group("/api/rooms")
+	group.Get("/", handlers.GetRooms)
+	group.Get("/:id", handlers.GetRoom)
+	group.Post("/", handlers.CreateRoom)
+	group.Put("/:id", handlers.UpdateRoom)
+	group.Delete("/:id", handlers.DeleteRoom)
+}
