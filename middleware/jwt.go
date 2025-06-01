@@ -10,29 +10,47 @@ import (
 
 func JWTProtected() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		token := c.Cookies("token")
+		// Get token from Authorization header first
+		token := c.Get("Authorization")
 		if token == "" {
-			return c.Redirect("/")
+			// Fallback to cookie if header not present
+			token = c.Cookies("token")
+		}
+
+		// Remove "Bearer " prefix if using Authorization header
+		if len(token) > 7 && token[:7] == "Bearer " {
+			token = token[7:]
+		}
+
+		if token == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Missing or invalid token",
+			})
 		}
 
 		claims, err := utils.ValidateJWT(token)
 		if err != nil {
-			return c.Redirect("/")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token",
+			})
 		}
 
 		email, ok := claims["email"].(string)
 		if !ok {
-			return c.Redirect("/")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "Invalid token payload",
+			})
 		}
 
 		var user models.User
 		result := config.DB.Where("email = ?", email).First(&user)
 		if result.Error != nil || result.RowsAffected == 0 {
-			return c.Redirect("/")
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": "User not found",
+			})
 		}
 
 		c.Locals("user", user)
 		return c.Next()
-
 	}
 }

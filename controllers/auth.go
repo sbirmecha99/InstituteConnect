@@ -167,6 +167,12 @@ func Register(c *fiber.Ctx) error {
 	if err := config.DB.Create(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("failed to register user :(")
 	}
+	if strings.Contains(c.Get("Accept"), "application/json") {
+		return c.JSON(fiber.Map{
+			"message": "registration successful",
+			"user":    user,
+		})
+	}
 	return c.Redirect("/")
 
 }
@@ -205,7 +211,16 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 		Path:     "/",
 	})
 
-	return c.Redirect("/dashboard")
+	if strings.Contains(c.Get("Accept"), "application/json") {
+    return c.JSON(fiber.Map{
+    "token": token,
+    "user":  user,
+})
+
+} else {
+    return c.Redirect("/dashboard")
+}
+
 
 
 }

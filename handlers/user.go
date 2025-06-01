@@ -8,13 +8,20 @@ import (
 )
 
 //all userrs
-func GetUsers(c *fiber.Ctx)error{
+func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
-	if err:= config.DB.Find(&users).Error;err!=nil{
-		return c.Status(500).JSON(fiber.Map{"error":"cant get users"})
+
+	user := c.Locals("user").(models.User)
+	if user.Role !="SuperAdmin"{
+		return c.Status(fiber.StatusForbidden).SendString("Only admin can access user list")
+	}
+
+	if err := config.DB.Find(&users).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "can't get users"})
 	}
 	return c.JSON(users)
-	}
+}
+
 //get user by ID
 func GetUser(c *fiber.Ctx)error{
 	id:=c.Params("id")

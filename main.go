@@ -42,6 +42,7 @@ func main() {
 	})
 	//user routes
 	routes.UserRoutes(app)
+	routes.RoomRoutes(app)
 	
 	// Serve static files (like CSS)
 	app.Static("/static", "./static")
