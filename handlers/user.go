@@ -12,7 +12,7 @@ func GetUsers(c *fiber.Ctx) error {
 	var users []models.User
 
 	user := c.Locals("user").(models.User)
-	if user.Role !="SuperAdmin"{
+	if user.Role !="SuperAdmin"&&user.Role!="Admin"{
 		return c.Status(fiber.StatusForbidden).SendString("Only admin can access user list")
 	}
 
@@ -25,7 +25,11 @@ func GetUsers(c *fiber.Ctx) error {
 //get user by ID
 func GetUser(c *fiber.Ctx)error{
 	id:=c.Params("id")
-	var user models.User
+	
+	user := c.Locals("user").(models.User)
+	if user.Role !="SuperAdmin"{
+		return c.Status(fiber.StatusForbidden).SendString("Only admin can access user list")
+	}
 	if err:=config.DB.First(&user,id).Error;err!=nil{
 		return c.Status(404).JSON(fiber.Map{"error":"user not found"})
 	}
@@ -65,6 +69,11 @@ func UpdateUser(c *fiber.Ctx)error{
 //deletion by ID
 func DeleteUser(c *fiber.Ctx)error{
 	id:= c.Params("id")
+
+	user := c.Locals("user").(models.User)
+	if user.Role !="SuperAdmin"{
+		return c.Status(fiber.StatusForbidden).SendString("Only admin can access user list")
+	}
 	if err:= config.DB.Delete(&models.User{},id).Error;err!=nil{
 		return c.Status(500).JSON(fiber.Map{"error":"could not delete user"})
 	}

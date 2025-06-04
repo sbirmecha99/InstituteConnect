@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "poppins";
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background:#669fc5
+}
+
+#root {
+  width: 100%;
+  padding: 0 0.6rem;
+}
+.login-container {
+  max-width: 410px;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  background: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+.login-container .form-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1.9rem;
+}
+.login-container .social-login {
+  display: flex;
+  /*gap: 10rem;*/
+}
+.social-login .social-button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0;
+  gap: 0.81rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 0.8rem;
+  background: #dae7ee;
+  border: 3px;
+  transition: 0.3s ease;
+}
+.social-login .social-button:hover {
+  background: #bed4de;
+}
+.social-login .social-button .social-icon {
+  width: 23px;
+}
+.login-container .separator span {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  padding: 0 0.9rem;
+  font-size: 1.06rem;
+  font-weight: 500;
+}
+.login-container .separator {
+  margin: 1.5rem 0;
+  text-align: center;
+  position: relative;
+}
+.login-container .separator::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: #bfc2c4;
+}
+.login-form .input-wrapper{
+  position: relative;
+  height: 44px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+.login-form .input-wrapper .input-field{
+  height: 100%;
+  width: 100%;
+  outline: none;
+  font-size: 0.9rem;
+  border-radius: 0.31rem;
+  border: 1px solid #bfc2c4;
+  padding: 0 3.25rem 0.2rem ;
+  justify-content: center;
+  transition: 0.4s ease;
+  color: #292b2c;
+}
+.login-form .input-wrapper .input-field:focus{
+  border-color: #87898a;
+}
+.login-form .input-wrapper .input-field::placeholder{
+  color:rgb(162, 157, 157) ;
+
+  }
+.login-form .input-wrapper i{
+  color: #3f609f;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: 0.2s ease;
+
+}
+.login-form .input-wrapper i:not(.eye-icon){
+  left: 0.9rem;
+  pointer-events: none;
+
+}
+.login-form .input-wrapper .input-field:focus ~i:not(.eye-icon){
+  color: #4858b0;
+}
+.login-form .input-wrapper i.eye-icon{
+  font-size: 1.25rem;
+  cursor: pointer;
+  right: 0.9rem;
+  display: none;
+}
+.login-form .input-wrapper .input-field:valid ~ i.eye-icon{
+  display: block;
+}
+
+.login-form .forgot-pass-link{
+  display: block;
+  margin-top:-0.5rem ;
+  font-size: 0.85rem;
+}
+.login-form .login-button{
+  width: 100%;
+  height: 54px;
+  outline: none;
+  color: #fff;
+  border:none;
+  font-weight: 500;
+  cursor: pointer;
+  background: #2c6b95;
+  margin-top: 2rem;
+  border-radius: 0.3rem;
+  transform: 0.2s ease;
+}
+.login-form .login-button:hover{
+  background:#1b5882;
+  
+}
+.login-container .signup-text{
+  text-align: left;
+  font-weight: 400;
+  margin: 0.75rem 0 0.3rem;
+  
+}
+.login-container a{
+  color: #5e6061;
+  text-decoration: none;
+  font-weight: 450;
+}
+.login-container a:hover{
+  text-decoration: underline;
+}

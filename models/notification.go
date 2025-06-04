@@ -4,10 +4,9 @@ import "gorm.io/gorm"
 
 type Notification struct {
     gorm.Model
-    SenderID  uint
-    Role      Role
-    Audience  string 
-    Message   string
-
-    Sender    User `gorm:"foreignKey:SenderID"`
+    Title  string `json:"title"`
+    Description      string `json:"description"`
+    PostedByID  uint `json:"posted_by_id"`
+    ClassName   string `json:"class_name"` //for specifying class (optional)
+    
 }
