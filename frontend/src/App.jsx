@@ -3,6 +3,12 @@ import Login from "./pages/Login"; // Your Login page component
 import Dashboard from "./pages/Dashboard"; // Your Dashboard page component
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
+import StudentDashboard from "./pages/dashboards/StudentDashboard";
+import ProfDashboard from "./pages/dashboards/ProfDashboard";
+import DeanDashboard from "./pages/dashboards/DeanDashboard";
+import HodDashboard from "./pages/dashboards/HodDashboard";
+
+
 
 function App() {
   return (
@@ -23,7 +29,7 @@ function App() {
         path="/dashboard/professor"
         element={
           <ProtectedRoute>
-            <ProfessorDashboard />
+            <ProfDashboard />
           </ProtectedRoute>
         }
       />
@@ -31,7 +37,7 @@ function App() {
         path="/dashboard/hod"
         element={
           <ProtectedRoute>
-            <HODDashboard />
+            <HodDashboard />
           </ProtectedRoute>
         }
       />

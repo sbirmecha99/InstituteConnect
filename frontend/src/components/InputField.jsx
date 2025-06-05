@@ -1,12 +1,14 @@
 import { useState } from "react";
 
-const InputField = ({ type, placeholder, icon }) => {
+const InputField = ({ type, placeholder, icon,value,onChange }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   return (
     <div className="input-wrapper">
       <input
         type={isPasswordShown ? "text" : type}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
         className="input-field"
         required
       />

@@ -1,23 +1,37 @@
-import { useEffect } from "react"
-import { useNavigate,useLocation } from "react-router-dom"
+import { useEffect } from "react";
+import { useNavigate,useLocation } from "react-router-dom";
+import axios from "axios";
 
 function Dashboard(){
     const navigate=useNavigate();
-    const location= useLocation();
+    useEffect(() => {
+      axios
+        .get("http://localhost:3000/api/authverify", { withCredentials: true })
+        .then((res) => {
+          const role = res.data.role;
+          switch (role) {
+            case "SuperAdmin":
+              navigate("/dashboard/dean");
+              break;
+            case "Admin":
+              navigate("/dashboard/hod");
+              break;
+            case "Prof":
+              navigate("/dashboard/professor");
+              break;
+            case "Student":
+              navigate("/dashboard/student");
+              break;
+            default:
+              navigate("/login");
+          }
+        })
+        .catch(() => {
+          navigate("/login");
+        });
+    }, [navigate]);
 
-    useEffect(()=>{
-        const params=new URLSearchParams(location.search);
-        const token = params.get("token");
-        if(token){
-            localStorage.setItem("token",token);
-            navigate("/dashboard",{replace:true});
-        }
-    },[location,navigate]);
-    return(
-        <div>
-            welcome to dashboard
-        </div>
-    )
+    return <div>Loading your dashboard...</div>;
 }
 
 export default Dashboard

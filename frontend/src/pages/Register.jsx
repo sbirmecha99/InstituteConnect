@@ -42,7 +42,7 @@ const Register = () => {
         <InputField
           type="text"
           placeholder="Full Name"
-          icon="user"
+          icon="person"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />

@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode";
 import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
+
+
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -14,6 +18,9 @@ function Login() {
     e.preventDefault();
     setError("");
 
+    //DEBUG
+    console.log("Email being sent:", email);
+
     try {
       const res = await axios.post(
         "http://localhost:3000/api/login",
@@ -24,6 +31,7 @@ function Login() {
         {
           withCredentials: true,
           headers: {
+            "Content-Type":"application/json",
             Accept: "application/json",
           },
         }
@@ -36,9 +44,13 @@ function Login() {
       if (token) {
         localStorage.setItem("token", token);
 
-        //decosing to get user role
-        const decoded = jwt_decode(token);
+        //decoding to get user role
+        const decoded = jwtDecode(token);
+        console.log("Decoded JWT:", decoded);
+
         const role = decoded.role;
+        console.log("User role:", role);
+        
 
         //redirction based on roles
         switch (role) {
