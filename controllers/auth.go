@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"instituteconnect/utils"
@@ -105,96 +106,96 @@ func GoogleCallback(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    jwtToken,
 		HTTPOnly: true,
-		Secure:   true,
+		Secure:   false,
 	})
-	return c.Redirect("/dashboard")
-
+	return c.Redirect("http://localhost:5173/dashboard")
 
 }
 
 // register
 func Register(c *fiber.Ctx) error {
 	var input struct {
-		Name            string `form:"fullname"`
-		Email           string `form:"email"`
-		Password        string `form:"password"`
-		ConfirmPassword string `form:"confirmPassword"`
+		Name            string `json:"name"`
+		Email           string `json:"email"`
+		Password        string `json:"password"`
+		ConfirmPassword string `json:"confirmPassword"`
 	}
+
 	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("invalid input")
+		fmt.Println("Parse error:", err)
+		return c.Status(400).SendString("invalid input")
 	}
 
 	if input.Password != input.ConfirmPassword {
-		return c.Status(fiber.StatusBadRequest).SendString("passwords do not match!")
-	}
-
-	if !strings.HasSuffix(input.Email, "@nitdgp.ac.in") {
-		return c.Status(fiber.StatusBadRequest).SendString("only institute emails allowed")
+		return c.Status(400).SendString("passwords do not match!")
 	}
 
 	var existing models.User
 	result := config.DB.Where("email = ?", input.Email).First(&existing)
-
 	if result.RowsAffected > 0 {
 		if existing.Password != "" {
-			//normal login already done
-			return c.Status(fiber.StatusBadRequest).SendString("email already in use")
+			return c.Status(400).SendString("email already in use")
 		} else {
-			//already registered via google, now setting password
 			hashed, err := utils.HashPassword(input.Password)
 			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).SendString("could not hash password")
+				return c.Status(500).SendString("could not hash password")
 			}
 			existing.Password = hashed
 			if err := config.DB.Save(&existing).Error; err != nil {
-				return c.Status(fiber.StatusInternalServerError).SendString("Failed to update password")
+				return c.Status(500).SendString("failed to update password")
 			}
-			return c.Redirect("/") // password set
+			return c.Redirect("/") // updated password for Google OAuth user
 		}
 	}
-	//new user
+	// New user
 	hashed, err := utils.HashPassword(input.Password)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("could not hash password")
+		return c.Status(500).SendString("could not hash password")
 	}
+
 	user := models.User{
 		Name:     input.Name,
 		Email:    input.Email,
-		Password: hashed,
+		Password: string(hashed),
 		Role:     models.Role(utils.DetermineRole(input.Email)),
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("failed to register user :(")
+		return c.Status(500).SendString("failed to register user :(")
 	}
-	if strings.Contains(c.Get("Accept"), "application/json") {
-		return c.JSON(fiber.Map{
-			"message": "registration successful",
-			"user":    user,
-		})
-	}
-	return c.Redirect("/")
 
+	// Optional: return JSON or redirect based on frontend
+	return c.JSON(fiber.Map{
+		"message": "registration successful",
+		"user":    user,
+	})
 }
 
 //email password login
 
 func EmailPasswordLogin(c *fiber.Ctx) error {
+	log.Println("login endpoint hit")
 	var input struct {
-		Email    string `form:"email"`
-		Password string `form:"password"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 	if err := c.BodyParser(&input); err != nil {
+		log.Println("error parsing body",err)
 		return c.Status(fiber.StatusBadRequest).SendString("invalid input")
 	}
+	log.Println("Email:", input.Email)
 
 	var user models.User
 	result := config.DB.Where("email = ?", input.Email).First(&user)
+	log.Println("user found:",result.RowsAffected)
+
 	if result.RowsAffected == 0 || user.Password == "" {
+		log.Println("User not found or password missing")
 		return c.Status(fiber.StatusUnauthorized).SendString("user not found")
 	}
 
 	if !utils.CheckPasswordHash(input.Password, user.Password) {
+		log.Println("Incorrect password")
 		return c.Status(fiber.StatusUnauthorized).SendString("incorrect password")
 	}
 
@@ -221,6 +222,47 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
     return c.Redirect("/dashboard")
 }
 
+}
 
+func Me(c *fiber.Ctx)error{
+	tokenStr := c.Cookies("token")
+    if tokenStr == "" {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthenticated"})
+    }
 
+    userEmail, err := utils.ValidateJWT(tokenStr)
+    if err != nil {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token"})
+    }
+
+    var user models.User
+    if err := config.DB.Where("email = ?", userEmail).First(&user).Error; err != nil {
+        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user not found"})
+    }
+
+    return c.JSON(fiber.Map{"user": user})
+}
+func AuthVerify(c *fiber.Ctx) error {
+	tokenStr := c.Cookies("token")
+	if tokenStr == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "No token present",
+		})
+	}
+
+	claims, err := utils.ValidateJWT(tokenStr)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid or expired token",
+		})
+	}
+
+	// Extract email and role safely from MapClaims
+	email, _ := claims["email"].(string)
+	role, _ := claims["role"].(string)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"email": email,
+		"role":  role,
+	})
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func UserRoutes(app *fiber.App) {
+func UsersRoutes(app *fiber.App) {
 	group := app.Group("/api/users")
 	log.Println("connecting user api")
 

@@ -8,7 +8,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 )
 
@@ -35,29 +35,20 @@ func main() {
 	log.Println("migration successful!")
 
 
-	// Set up HTML templates
-	engine := html.New("./templates", ".html")
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+
+	app := fiber.New()
+	
+
+	//cors setup for react
+	app.Use(cors.New(cors.Config{
+	AllowOrigins: "http://localhost:5173",
+	AllowCredentials: true,
+	AllowHeaders: "Content-Type",
+  }))
 	//user routes
 	routes.UserRoutes(app)
+	routes.UsersRoutes(app)
 	routes.RoomRoutes(app)
-	
-	// Serve static files (like CSS)
-	app.Static("/static", "./static")
-
-	// Serve login.html at root
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("login", fiber.Map{})
-	})
-	log.Println("[debug]setting up routes")
-
-	routes.SetupRoutes(app)
-
-	app.Get("/dashboard", func(c *fiber.Ctx) error {
-		return c.Render("dashboard", fiber.Map{})
-	})
 
 	log.Println("[debug]starting server on 3000")
 

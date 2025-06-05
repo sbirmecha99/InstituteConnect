@@ -7,6 +7,20 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func UserRoutes(app *fiber.App){
+    api:= app.Group("/api")
+
+    api.Post("/register",controllers.Register)
+    app.Post("/api/login",controllers.EmailPasswordLogin)
+
+    app.Get("/auth/google",controllers.GoogleLogin)
+    app.Get("/auth/google/callback",controllers.GoogleCallback)
+
+    api.Get("/me",controllers.Me)
+    app.Get("/api/auth/verify", controllers.AuthVerify)
+
+}
+
 func SetupRoutes(app *fiber.App) {
 
 	//serve login page
