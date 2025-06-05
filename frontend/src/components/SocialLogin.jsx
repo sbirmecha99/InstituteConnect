@@ -1,13 +1,20 @@
 const SocialLogin = () => {
+    const handleGoogleLogin = () => {
+      window.location.href = "http://localhost:3000/auth/google";
+    };
+    
   return (
     <div className="social-login">
-      <button className="social-button">
+      <button
+        className="social-button"
+        onClick={handleGoogleLogin}
+      >
         Sign in with Google
         <img
-          src="icons8-google.svg"
+          src="googleicon.svg"
           alt="Google"
           width={25}
-          className="social icon"
+          className="social-icon"
         />
       </button>
     </div>

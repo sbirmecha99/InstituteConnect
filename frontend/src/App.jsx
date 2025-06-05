@@ -1,34 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login"; // Your Login page component
+import Dashboard from "./pages/Dashboard"; // Your Dashboard page component
+import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      {/* Protected role-based dashboards */}
+      <Route
+        path="/dashboard/student"
+        element={
+          <ProtectedRoute>
+            <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/professor"
+        element={
+          <ProtectedRoute>
+            <ProfessorDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/hod"
+        element={
+          <ProtectedRoute>
+            <HODDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/dean"
+        element={
+          <ProtectedRoute>
+            <DeanDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<div>404 Not Found</div>} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
