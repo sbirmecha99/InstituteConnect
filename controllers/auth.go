@@ -108,7 +108,21 @@ func GoogleCallback(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   false,
 	})
-	return c.Redirect("http://localhost:5173/dashboard")
+	var redirectURL string
+switch user.Role {
+case "SuperAdmin":
+	redirectURL = "http://localhost:5173/dashboard/dean"
+	case "Admin":
+	redirectURL = "http://localhost:5173/dashboard/hod"
+case "Prof":
+	redirectURL = "http://localhost:5173/dashboard/professor"
+case "Student":
+	redirectURL = "http://localhost:5173/dashboard/student"
+default:
+	redirectURL = "http://localhost:5173/dashboard"
+}
+
+return c.Redirect(redirectURL)
 
 }
 
