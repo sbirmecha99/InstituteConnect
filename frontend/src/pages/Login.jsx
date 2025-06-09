@@ -57,6 +57,9 @@ function Login() {
           case "SuperAdmin":
             navigate("/dashboard/dean");
             break;
+            case "Admin":
+              navigate("/dashboard/hod")
+              break;
           case "Prof":
             navigate("/dashboard/professor");
             break;
