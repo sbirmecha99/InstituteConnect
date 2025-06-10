@@ -18,5 +18,4 @@ type User struct{
     Password string `gorm:""`
     Role     Role   `gorm:"not null"`
     GoogleID string `gorm:"default:null"`
-    
 }
