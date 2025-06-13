@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, json } from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
-
-
-
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -31,7 +28,7 @@ function Login() {
         {
           withCredentials: true,
           headers: {
-            "Content-Type":"application/json",
+            "Content-Type": "application/json",
             Accept: "application/json",
           },
         }
@@ -48,26 +45,30 @@ function Login() {
         const decoded = jwtDecode(token);
         console.log("Decoded JWT:", decoded);
 
+        //storing
+        localStorage.setItem("user",JSON.stringify(decoded));
+
         const role = decoded.role;
         console.log("User role:", role);
-        
+
+        localStorage.setItem("user", JSON.stringify(decoded));
 
         //redirction based on roles
         switch (role) {
           case "SuperAdmin":
-            navigate("/dashboard/dean");
+            window.location.href="/dashboard/dean";
             break;
-            case "Admin":
-              navigate("/dashboard/hod")
-              break;
+          case "Admin":
+            window.location.href="/dashboard/hod";
+            break;
           case "Prof":
-            navigate("/dashboard/professor");
+            window.location.href="/dashboard/professor";
             break;
           case "Student":
-            navigate("/dashboard/student");
+            window.location.href="/dashboard/student";
             break;
           default:
-            navigate("/dashboard");
+            window.location.href="/dashboard";
         }
       }
     } catch (err) {

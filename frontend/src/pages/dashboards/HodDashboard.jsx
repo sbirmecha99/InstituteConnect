@@ -1,9 +1,9 @@
-import React from 'react'
+import Sidebar from "../../components/Sidebar";
+import Topbar from "../../components/Sidebar";
+import { Box } from "@mui/material";
 
 const HodDashboard = () => {
-  return (
-    <div>HodDashboard</div>
-  )
-}
+  return <div>hod</div>;
+};
 
-export default HodDashboard
+export default HodDashboard;
