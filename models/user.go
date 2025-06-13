@@ -16,6 +16,13 @@ type User struct{
     Name     string `gorm:"not null"`
     Email    string `gorm:"uniqueIndex;not null"`
     Password string `gorm:""`
-    Role     Role   `gorm:"not null"`
+    Role     Role   `gorm:"not null" json:"role"`
     GoogleID string `gorm:"default:null"`
+
+    ProfilePicture string `gorm:"default:'/uploads/guest_user.jpeg'" json:"profile_picture"`
+    Program string `json:"program"`
+    Department string `json:"department"`
+    Semester int `json:"semester"`
+
 }
+

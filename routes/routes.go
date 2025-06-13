@@ -2,6 +2,8 @@ package routes
 
 import (
 	"instituteconnect/controllers"
+	"instituteconnect/middleware"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -16,6 +18,7 @@ func UserRoutes(app *fiber.App){
 
     api.Get("/me",controllers.Me)
     app.Get("/api/auth/verify", controllers.AuthVerify)
+	app.Put("/api/profile",middleware.JWTProtected(),controllers.UpdateProfile)
 
 }
 

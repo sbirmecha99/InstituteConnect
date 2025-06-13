@@ -36,15 +36,20 @@ func main() {
 
 
 
-	app := fiber.New()
-	
+	app := fiber.New(fiber.Config{
+		BodyLimit: 10*1024*1024,
+	})
+
+	app.Static("/uploads", "./uploads")	
 
 	//cors setup for react
 	app.Use(cors.New(cors.Config{
 	AllowOrigins: "http://localhost:5173",
 	AllowCredentials: true,
-	AllowHeaders: "Content-Type",
+	AllowHeaders: "Content-Type,Authorization",
+	AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
   }))
+
 	//user routes
 	routes.UserRoutes(app)
 	routes.UsersRoutes(app)

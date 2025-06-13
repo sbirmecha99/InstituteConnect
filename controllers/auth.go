@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -96,7 +97,7 @@ func GoogleCallback(c *fiber.Ctx) error {
 		}
 	}
 	//generate jwt
-	jwtToken, err := utils.GenerateJWT(user.Email, string(user.Role))
+	jwtToken, err := utils.GenerateJWT(user.Email, string(user.Role),string(user.Name))
 	if err != nil {
 		log.Println("jwt generation failed:", err)
 		return c.SendStatus(http.StatusInternalServerError)
@@ -107,6 +108,8 @@ func GoogleCallback(c *fiber.Ctx) error {
 		Value:    jwtToken,
 		HTTPOnly: true,
 		Secure:   false,
+		SameSite: "Lax",
+		Path: "/",
 	})
 	var redirectURL string
 switch user.Role {
@@ -214,7 +217,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 	}
 
 	//generate jwt
-	token, err := utils.GenerateJWT(user.Email, string(user.Role))
+	token, err := utils.GenerateJWT(user.Email, string(user.Role),string(user.Name))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("failed to generate token")
 	}
@@ -244,13 +247,19 @@ func Me(c *fiber.Ctx)error{
         return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthenticated"})
     }
 
-    userEmail, err := utils.ValidateJWT(tokenStr)
+    claims, err := utils.ValidateJWT(tokenStr)
     if err != nil {
         return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token"})
     }
+	email, ok := claims["email"].(string)
+if !ok {
+    return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+        "error": "Invalid token payload",
+    })
+}
 
     var user models.User
-    if err := config.DB.Where("email = ?", userEmail).First(&user).Error; err != nil {
+    if err := config.DB.Where("email = ?", email).First(&user).Error; err != nil {
         return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user not found"})
     }
 
@@ -278,5 +287,71 @@ func AuthVerify(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"email": email,
 		"role":  role,
+	})
+}
+
+//update profile 
+func UpdateProfile(c *fiber.Ctx) error {
+	userVal := c.Locals("user")
+	user, ok := userVal.(models.User)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	name := c.FormValue("name")
+	program := c.FormValue("program")
+	department := c.FormValue("department")
+	semesterStr := c.FormValue("semester")
+
+	// Update only if valid semester is provided
+	var semester *int
+	if semesterStr != "" {
+		s, err := strconv.Atoi(semesterStr)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid semester"})
+		}
+		if program == "M.Tech" && s > 4 {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "M.Tech has only 4 semesters"})
+		}
+		semester = &s
+	}
+
+	// Handle profile image upload
+	file, err := c.FormFile("image")
+	if err == nil {
+		filePath := fmt.Sprintf("./uploads/%d_%s", user.ID, file.Filename)
+		if err := c.SaveFile(file, filePath); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save image"})
+		}
+		user.ProfilePicture = filePath
+	}
+
+	// Prepare map of updates
+	updates := map[string]interface{}{}
+	if name != "" {
+		updates["Name"] = name
+	}
+	if program != "" {
+		updates["Program"] = program
+	}
+	if department != "" {
+		updates["Department"] = department
+	}
+	if semester != nil {
+		updates["Semester"] = *semester
+	}
+	if user.ProfilePicture != "" {
+		updates["ProfilePicture"] = user.ProfilePicture
+	}
+
+	if err := config.DB.Model(&user).Updates(updates).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update profile"})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Profile updated successfully",
+	"user":user,
 	})
 }

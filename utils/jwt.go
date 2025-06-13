@@ -10,11 +10,12 @@ import (
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
-func GenerateJWT(email string, role string) (string, error) {
+func GenerateJWT(email string, role string,name string) (string, error) {
 	claims := jwt.MapClaims{
 		"email": email,
 		"exp":   time.Now().Add(72 * time.Hour).Unix(),
 		"role":  role,
+		"name": name,
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -33,5 +34,9 @@ func ValidateJWT(tokenStr string) (jwt.MapClaims, error) {
 	if err != nil || !token.Valid {
 		return nil, err
 	}
-	return token.Claims.(jwt.MapClaims),nil
+	claims,ok:= token.Claims.(jwt.MapClaims)
+	if !ok{
+		return nil, errors.New("invalid token claims")
+	}
+	return claims,nil
 }
