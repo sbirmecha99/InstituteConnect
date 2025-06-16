@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"time"
@@ -9,15 +10,15 @@ import (
 )
 
 func RequestAppointment(c *fiber.Ctx)error{
-	role:= c.Locals("role")
-	if role!= "Student"{
+	user := c.Locals("user").(models.User)
+	fmt.Println("role is: ",user.Role)
+	if user.Role!= "Student"{
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error":"only students can request app"})
 	}
-
-	user:= c.Locals("user").(models.User)
 	
 	type RequestInput struct{
 		FacultyEmail string `json:"faculty_email"`
+		Subject string `json:"subject"`
 	}
 
 	var input RequestInput
@@ -30,10 +31,19 @@ func RequestAppointment(c *fiber.Ctx)error{
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid faculty email"})
 	}
 
+	var existing models.Appointment
+if err:=config.DB.Where("student_id=? AND faculty_id=?AND status=?",user.ID,faculty.ID,models.Pending).First(&existing).Error;err==nil{
+	return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+"error":"You already have a pending appointment with this Professor",
+	})
+	
+}
+
 	appointment := models.Appointment{
 		StudentID: user.ID,
 		FacultyID: faculty.ID,
 		Status:    models.Pending,
+		Subject: input.Subject,
 	}
 
 	if err := config.DB.Create(&appointment).Error; err != nil {
@@ -42,20 +52,44 @@ func RequestAppointment(c *fiber.Ctx)error{
 
 	return c.Status(fiber.StatusCreated).JSON(appointment)
 }
-
-func GetAppointmentsForProf(c *fiber.Ctx)error{
-	role:=c.Locals("role")
-	if role!="Prof"{
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error":"only professors can view appointments"})
+func GetAppointmentsForStudent(c *fiber.Ctx) error {
+	role := c.Locals("role")
+	if role != "Student" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "only students can view appointments"})
 	}
-	user:=c.Locals("user").(models.User)
+
+	user := c.Locals("user").(models.User)
 
 	var appts []models.Appointment
-	if err:= config.DB.Where("prof_id = ?",user.ID).Find(&appts).Error;err!=nil{
-		return c.Status(500).JSON(fiber.Map{"error":"could not get appointments"})
+	if err := config.DB.
+		Where("student_id = ?", user.ID).
+		Preload("Faculty").
+		Find(&appts).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
 	}
+
 	return c.JSON(appts)
 }
+
+func GetAppointmentsForProf(c *fiber.Ctx) error {
+	role := c.Locals("role")
+	if role != "Prof" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "only professors can view appointments"})
+	}
+
+	user := c.Locals("user").(models.User)
+
+	var appts []models.Appointment
+	if err := config.DB.
+		Where("faculty_id = ?", user.ID).
+		Preload("Student").
+		Find(&appts).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
+	}
+
+	return c.JSON(appts)
+}
+
 
 func UpdateAppointmentStatus(c *fiber.Ctx)error{
 	role:=c.Locals("role")

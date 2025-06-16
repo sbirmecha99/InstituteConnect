@@ -81,35 +81,38 @@ function Login() {
   };
   return (
     <div className="auth-page">
-      <div className="login-container">
-        <h2 className="form-title">Login</h2>
-        <form className="login-form" onSubmit={handleEmailLogin}>
-          <InputField
-            type="email"
-            placeholder="Institute Email address"
-            icon="mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <InputField
-            type="password"
-            placeholder="Password"
-            icon="lock"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <a href="#" className="forgot-pass-link">
-            Forgot Password?
-          </a>
-          <button className="login-button">Log In</button>
-        </form>
-        <p className="signup-text">
-          Don&apos;t have an account? <a href="/register">Register</a>{" "}
-        </p>
-        <p className="separator">
-          <span>or</span>{" "}
-        </p>
-        <SocialLogin />
+      <div className="main-container">
+        <div className="image-section-login"></div>
+        <div className="login-container">
+          <h2 className="form-title">Login</h2>
+          <form className="login-form" onSubmit={handleEmailLogin}>
+            <InputField
+              type="email"
+              placeholder="Institute Email address"
+              icon="mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <InputField
+              type="password"
+              placeholder="Password"
+              icon="lock"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <a href="#" className="forgot-pass-link">
+              Forgot Password?
+            </a>
+            <button className="login-button">Log In</button>
+          </form>
+          <p className="signup-text">
+            Don&apos;t have an account? <a href="/register">Register</a>{" "}
+          </p>
+          <p className="separator">
+            <span>or</span>{" "}
+          </p>
+          <SocialLogin />
+        </div>
       </div>
     </div>
   );

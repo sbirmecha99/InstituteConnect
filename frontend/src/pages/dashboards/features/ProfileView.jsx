@@ -75,7 +75,7 @@ const ProfileView = () => {
 
         <CardContent sx={{ px: 0 }}>
           <Typography variant="body1" gutterBottom mb={1}>
-            <strong>Email:</strong> {email || email}
+            <strong>Email:</strong> {email || "N/A"}
           </Typography>
 
           {(role === "Student" || role === "Prof" || role === "Admin") &&

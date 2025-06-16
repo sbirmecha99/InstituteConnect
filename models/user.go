@@ -14,7 +14,7 @@ const(
 type User struct{
     gorm.Model
     Name     string `gorm:"not null"`
-    Email    string `gorm:"uniqueIndex;not null"`
+    Email    string `gorm:"uniqueIndex;not null" json:"email"`
     Password string `gorm:""`
     Role     Role   `gorm:"not null" json:"role"`
     GoogleID string `gorm:"default:null"`

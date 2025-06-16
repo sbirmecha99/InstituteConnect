@@ -7,10 +7,45 @@
   box-sizing: border-box;
   font-family: "poppins";
 }
+.main-container {
+  display: flex; /* Add this */
+  background-color: #fff;
+  border-radius: 40px;
+  overflow: hidden;
+  width: 50vw;
+  min-height: 480px;
+  max-width: 100%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.image-section-login {
+  flex: 1;
+  background: url('/public/2188313.jpg') center/cover no-repeat;
+  min-height: 100%;
+  border-right: red;
+}
+.image-section-register{
+  flex:1;
+  background: url('/public/7618724.jpg') center/cover no-repeat;
+}
+
+.login-container {
+  flex: 1.2;
+  max-width: 410px;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  padding: 2.5rem 1.5rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
 body {
   margin: 0;
   padding: 0;
-  background: #669fc5;
+  background: #dae2e7;
   font-family: "poppins", sans-serif;
 }
 .auth-page {
@@ -24,14 +59,7 @@ body {
   width: 100%;
   padding: 0 0.6rem;
 }
-.login-container {
-  max-width: 410px;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-  padding: 2.5rem 1.5rem;
-  background: #fff;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-}
+
 .login-container .form-title {
   text-align: center;
   font-size: 1.4rem;
@@ -47,7 +75,7 @@ body {
   width: 100%;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem 0;
+  padding: 0.4rem 0;
   gap: 0.81rem;
   font-weight: 500;
   cursor: pointer;

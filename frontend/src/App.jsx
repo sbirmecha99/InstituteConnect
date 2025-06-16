@@ -8,6 +8,7 @@ import StudentDashboard from "./pages/dashboards/StudentDashboard";
 import ProfDashboard from "./pages/dashboards/ProfDashboard";
 import DeanDashboard from "./pages/dashboards/DeanDashboard";
 import HodDashboard from "./pages/dashboards/HodDashboard";
+import BookApp from "./pages/dashboards/features/BookApp";
 import { ColorModeContext, useMode } from "./theme";
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import Topbar from "./components/Topbar";
@@ -15,7 +16,6 @@ import Sidebar from "./components/Sidebar";
 import { useEffect } from "react";
 import axios from "axios";
 import ProfileView from "./pages/dashboards/features/ProfileView";
-
 
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
@@ -43,9 +43,7 @@ const ThemedDashboardRoutes = () => {
   );
 };
 
-
 const App = () => {
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -64,7 +62,6 @@ const App = () => {
       fetchUser();
     }
   }, []);
-
 
   const [theme, colorMode] = useMode();
   return (
@@ -123,7 +120,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="features/book-appointments"
+          element={
+            <ProtectedRoute>
+              <BookApp />
+            </ProtectedRoute>
+          }
+        />
       </Route>
+
       {/* Catch-all */}
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>

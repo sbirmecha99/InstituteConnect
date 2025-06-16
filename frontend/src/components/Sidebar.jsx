@@ -167,8 +167,8 @@ if (!storedUser){
                   setSelected={setSelected}
                 />
                 <Item
-                  title="Appointment Status"
-                  to="/appointments"
+                  title="Appointments"
+                  to="/dashboard/features/book-appointments"
                   icon={<AccountBoxOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
@@ -200,9 +200,23 @@ if (!storedUser){
                   setSelected={setSelected}
                 />
                 <Item
+                  title="My Profile"
+                  to="/dashboard/features/my-profile"
+                  icon={<PersonOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
                   title="Assigned Rooms"
                   to="/rooms"
                   icon={<RoomOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Appointments"
+                  to="/appointments"
+                  icon={<AccountBoxOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -233,9 +247,23 @@ if (!storedUser){
                   setSelected={setSelected}
                 />
                 <Item
+                  title="My Profile"
+                  to="/dashboard/features/my-profile"
+                  icon={<PersonOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
                   title="Assign Room"
                   to="/rooms/assign"
                   icon={<MeetingRoomOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Appointments"
+                  to="/appointments"
+                  icon={<AccountBoxOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -255,6 +283,13 @@ if (!storedUser){
                   title="Dashboard"
                   to="/superadmin/dashboard"
                   icon={<HomeOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="My Profile"
+                  to="/dashboard/features/my-profile"
+                  icon={<PersonOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />

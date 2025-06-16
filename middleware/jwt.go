@@ -51,6 +51,7 @@ func JWTProtected() fiber.Handler {
 		}
 
 		c.Locals("user", user)
+		c.Locals("role",user.Role)
 		return c.Next()
 	}
 }

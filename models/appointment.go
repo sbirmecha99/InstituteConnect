@@ -19,9 +19,10 @@ type Appointment struct {
 
 	StudentID uint              `json:"student_id" gorm:"not null;index"` // Indexed for faster lookup
 	FacultyID uint              `json:"faculty_id" gorm:"not null;index"`
-	Status    AppointmentStatus `json:"status" gorm:"type:enum('pending','accepted','declined');default:'pending'"`
+	Status    AppointmentStatus `json:"status" gorm:"type:varchar(20);default:'pending'"`
+	Subject string `json:"subject" gorm:"type:varchar(255);not null"`
 
-	TimeSlot time.Time `json:"time_slot"`
+	TimeSlot time.Time `json:"time_slot" gorm:"not null"`
 
 	Student User `gorm:"foreignKey:StudentID" json:"student"`
 	Faculty User `gorm:"foreignKey:FacultyID" json:"faculty"`

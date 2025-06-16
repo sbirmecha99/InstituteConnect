@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
+import SocialLogin from "../components/SocialLogin"
+
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -37,43 +39,48 @@ const Register = () => {
 
   return (
     <div className="auth-page">
-      <div className="login-container">
-        <h2 className="form-title">InstituteConnect</h2>
-        <form className="login-form" onSubmit={handleRegister}>
-          <InputField
-            type="text"
-            placeholder="Full Name"
-            icon="person"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
-          <InputField
-            type="email"
-            placeholder="Institute Email address"
-            icon="mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <InputField
-            type="password"
-            placeholder="Password"
-            icon="lock"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <InputField
-            type="password"
-            placeholder="Confirm Password"
-            icon="lock"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+      <div className="main-container">
+        <div className="login-container">
+          <h2 className="form-title">InstituteConnect</h2>
+          <form className="login-form" onSubmit={handleRegister}>
+            <InputField
+              type="text"
+              placeholder="Full Name"
+              icon="person"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+            <InputField
+              type="email"
+              placeholder="Institute Email address"
+              icon="mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <InputField
+              type="password"
+              placeholder="Password"
+              icon="lock"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <InputField
+              type="password"
+              placeholder="Confirm Password"
+              icon="lock"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
 
-          <button className="login-button">Register</button>
-        </form>
-        <p className="signup-text">
-          Already have an account? <Link to="/login">Login</Link>
-        </p>
+            <button className="login-button">Register</button>
+          </form>
+          <p className="signup-text">
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+
+          <SocialLogin />
+        </div>
+        <div className="image-section-register"></div>
       </div>
     </div>
   );

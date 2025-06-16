@@ -79,3 +79,24 @@ func DeleteUser(c *fiber.Ctx)error{
 	}
 	return c.SendStatus(204)
 }
+func GetProfessors(c *fiber.Ctx) error {
+	var professors []models.User
+	if err := config.DB.Where("role = ?", "Prof").Find(&professors).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Failed to fetch professors",
+		})
+	}
+
+	//relevant data
+	safeList := make([]map[string]interface{}, 0, len(professors))
+	for _, p := range professors {
+		safeList = append(safeList, map[string]interface{}{
+			"id":         p.ID,
+			"name":       p.Name,
+			"email":      p.Email,
+			"department": p.Department,
+		})
+	}
+
+	return c.JSON(safeList)
+}
