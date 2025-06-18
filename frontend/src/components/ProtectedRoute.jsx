@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -32,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "30vh" }}
       >
-        <h2>Verifying...</h2>
+        <h2><CircularProgress/></h2>
       </div>
     );
   }

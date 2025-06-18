@@ -223,7 +223,7 @@ const Sidebar = () => {
                 />
                 <Item
                   title="Appointments"
-                  to="/appointments"
+                  to="/dashboard/features/prof-appointments"
                   icon={<AccountBoxOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}

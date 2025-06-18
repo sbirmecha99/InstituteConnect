@@ -21,7 +21,11 @@ func UserRoutes(app *fiber.App){
     app.Get("/api/auth/verify", controllers.AuthVerify)
 	app.Put("/api/profile",middleware.JWTProtected(),controllers.UpdateProfile)
 	app.Get("/api/professors",middleware.JWTProtected(), handlers.GetProfessors)
-	app.Post("/api/appointments", middleware.JWTProtected(),handlers.RequestAppointment)
 	app.Post("/api/logout",controllers.Logout)
+
+	app.Post("/api/appointments", middleware.JWTProtected(),handlers.RequestAppointment)
+	app.Get("/api/student/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForStudent)
+	app.Get("/api/prof/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForProf)
+
 
 }
