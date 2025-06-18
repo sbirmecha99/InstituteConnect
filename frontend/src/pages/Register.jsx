@@ -72,10 +72,13 @@ const Register = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
 
-            <button className="login-button">Register</button>
+            <button className="register-button">Register</button>
           </form>
           <p className="signup-text">
             Already have an account? <Link to="/login">Login</Link>
+          </p>
+          <p className="separator">
+            <span>or</span>{" "}
           </p>
 
           <SocialLogin />

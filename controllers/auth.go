@@ -12,6 +12,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/oauth2"
@@ -227,6 +228,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Path:     "/",
+		Secure: false,
 	})
 
 	if strings.Contains(c.Get("Accept"), "application/json") {
@@ -267,6 +269,7 @@ if !ok {
 }
 func AuthVerify(c *fiber.Ctx) error {
 	tokenStr := c.Cookies("token")
+	
 	if tokenStr == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "No token present",
@@ -355,3 +358,20 @@ func UpdateProfile(c *fiber.Ctx) error {
 	"user":user,
 	})
 }
+func Logout(c *fiber.Ctx) error {
+	// Explicitly expire the cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    "",
+		Expires:  time.Now().Add(-1 * time.Hour),
+		MaxAge:   -1,
+		HTTPOnly: true,
+		Path:     "/",       // must match login path
+		Secure:   false,     // set to true in production
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Logged out successfully",
+	})
+}
+

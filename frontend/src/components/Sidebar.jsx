@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
@@ -8,22 +8,31 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined"
+import RoomOutlinedIcon from "@mui/icons-material/RoomOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined"
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline"
+import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import defaultPfp from "../assets/guestuser.jpeg";
-
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
 const role = storedUser?.role;
-const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+
+const logout = async () => {
+  try {
+    await fetch("http://localhost:3000/api/logout", {
+      method: "POST",
+      credentials: "include", // important to send the cookie!
+    });
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+
+  localStorage.clear(); // clear user state
   window.location.href = "/";
 };
+
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -49,7 +58,7 @@ const Sidebar = () => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Dashboard");
-  
+
   const [_, forceUpdate] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,11 +73,10 @@ const Sidebar = () => {
 
     return () => clearInterval(interval);
   }, []);
-  
 
-if (!storedUser){
-  return <Typography sx={{m:2}}>Not Logged In</Typography>;
-}
+  if (!storedUser) {
+    return <Typography sx={{ m: 2 }}>Not Logged In</Typography>;
+  }
 
   return (
     <Box

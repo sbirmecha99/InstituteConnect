@@ -60,8 +60,8 @@ const ProfileView = () => {
         elevation={5}
         sx={{
           borderRadius: 2,
-          p: 3,
-          background: `${colors.blueAccent[700]} !important`,
+          p: 5,
+          background: `${colors.blueAccent[800]} !important`,
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         }}
       >

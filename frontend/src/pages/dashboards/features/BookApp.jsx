@@ -17,9 +17,6 @@ import {
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { tokens } from "../../../theme";
-import dayjs from "dayjs";
-import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const BookApp = () => {
   const theme = useTheme();
@@ -89,7 +86,6 @@ const BookApp = () => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box maxWidth={600} mx="auto" mt={5} px={3}>
         <Card
           elevation={4}
@@ -135,7 +131,7 @@ const BookApp = () => {
             <Button
               fullWidth
               variant="contained"
-              color="primary"
+              color="red"
               sx={{ mt: 3 }}
               onClick={handleSubmit}
               disabled={submitting}
@@ -147,19 +143,24 @@ const BookApp = () => {
               )}
             </Button>
           </CardContent>
+          <Box mt={2} display="flex" justifyContent="center">
+            <Snackbar
+              open={snackbar.open}
+              autoHideDuration={4000}
+              anchorOrigin={{ vertical: "center", horizontal: "center" }}
+              onClose={() => setSnackbar({ ...snackbar, open: false })}
+            >
+              <Alert
+                severity={snackbar.severity}
+                variant="filled"
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+              >
+                {snackbar.message}
+              </Alert>
+            </Snackbar>
+          </Box>
         </Card>
-
-        <Snackbar
-          open={snackbar.open}
-          autoHideDuration={4000}
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-        >
-          <Alert severity={snackbar.severity} variant="filled">
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
       </Box>
-    </LocalizationProvider>
   );
 };
 
