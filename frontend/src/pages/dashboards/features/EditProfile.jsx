@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
   CircularProgress,
+  colors,
 } from "@mui/material";
 
 const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH"];
@@ -111,6 +112,27 @@ const EditProfile = () => {
         label="Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            color: "text.primary",
+            backgroundColor: `${colors.primary}`,
+            "& fieldset": {
+              borderColor: "rgba(124, 119, 119, 0.3)", // subtle default border
+            },
+            "&:hover fieldset": {
+              borderColor: "white",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#90caf9", // or any highlight color
+            },
+          },
+          "& label": {
+            color: "text.secondary",
+          },
+          "& label.Mui-focused": {
+            color: "#90caf9",
+          },
+        }}
       />
 
       {(role === "Student" || role === "Prof" || role === "Admin") && (

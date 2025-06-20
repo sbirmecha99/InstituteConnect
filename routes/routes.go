@@ -26,6 +26,7 @@ func UserRoutes(app *fiber.App){
 	app.Post("/api/appointments", middleware.JWTProtected(),handlers.RequestAppointment)
 	app.Get("/api/student/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForStudent)
 	app.Get("/api/prof/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForProf)
+	app.Put("/api/appointments/:id",middleware.JWTProtected(),handlers.UpdateAppointmentStatus)
 
 
 }

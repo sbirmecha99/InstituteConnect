@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"time"
@@ -11,7 +10,6 @@ import (
 
 func RequestAppointment(c *fiber.Ctx)error{
 	user := c.Locals("user").(models.User)
-	fmt.Println("role is: ",user.Role)
 	if user.Role!= "Student"{
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error":"only students can request app"})
 	}
@@ -53,12 +51,10 @@ if err:=config.DB.Where("student_id=? AND faculty_id=?AND status=?",user.ID,facu
 	return c.Status(fiber.StatusCreated).JSON(appointment)
 }
 func GetAppointmentsForStudent(c *fiber.Ctx) error {
-	role := c.Locals("role")
-	if role != "Student" {
+	user := c.Locals("user").(models.User)
+	if user.Role != "Student" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "only students can view appointments"})
 	}
-
-	user := c.Locals("user").(models.User)
 
 	var appts []models.Appointment
 	if err := config.DB.
@@ -72,13 +68,12 @@ func GetAppointmentsForStudent(c *fiber.Ctx) error {
 }
 
 func GetAppointmentsForProf(c *fiber.Ctx) error {
-	role := c.Locals("role")
-	if role != "Prof" {
+	user := c.Locals("user").(models.User)
+	if user.Role != "Prof" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "only professors can view appointments"})
 	}
 
-	user := c.Locals("user").(models.User)
-
+	
 	var appts []models.Appointment
 	if err := config.DB.
 		Where("faculty_id = ?", user.ID).
@@ -87,13 +82,13 @@ func GetAppointmentsForProf(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
 	}
 
-	return c.JSON(appts)
+	return c.JSON(fiber.Map{"appointments":appts})
 }
 
 
 func UpdateAppointmentStatus(c *fiber.Ctx)error{
-	role:=c.Locals("role")
-	if role!="Prof"{
+	user := c.Locals("user").(models.User)
+	if user.Role!="Prof"{
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error":"only professors can update appointments"})
 	}
 
@@ -109,7 +104,7 @@ func UpdateAppointmentStatus(c *fiber.Ctx)error{
 	if err:=c.BodyParser(&input);err!=nil{
 		return c.Status(400).JSON(fiber.Map{"error":"invalid input"})
 	}
-	if input.Status!="Accepted" && input.Status != "Declined"{
+	if input.Status!="accepted" && input.Status != "declined"{
 		return c.Status(400).JSON(fiber.Map{"error":"invalid status"})
 	}
 	appt.Status=models.AppointmentStatus(input.Status)

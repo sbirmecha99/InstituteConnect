@@ -17,6 +17,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import ProfileView from "./pages/dashboards/features/ProfileView";
 import ProfAppointments from "./pages/dashboards/features/ProfAppointments";
+import TodoList from "./components/TodoList";
 
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
@@ -134,6 +135,14 @@ const App = () => {
           element={
             <ProtectedRoute>
               <ProfAppointments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="features/todo"
+          element={
+            <ProtectedRoute>
+              <TodoList />
             </ProtectedRoute>
           }
         />

@@ -94,10 +94,10 @@ const Sidebar = () => {
           padding: "5px 35px 5px 20px !important",
         },
         "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
+          color: "rgb(117, 124, 215) !important",
         },
         "& .pro-menu-item.active": {
-          color: "#6870fa !important",
+          color: " #6870fa !important",
         },
       }}
     >
@@ -202,7 +202,7 @@ const Sidebar = () => {
               <>
                 <Item
                   title="Dashboard"
-                  to="/prof/dashboard"
+                  to="/dashboard/professor"
                   icon={<HomeOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
@@ -318,7 +318,7 @@ const Sidebar = () => {
               </>
             )}
             <MenuItem icon={<LogoutOutlinedIcon />} onClick={logout}>
-              <Typography>Logout</Typography>
+              <Typography color="grey">Logout</Typography>
             </MenuItem>
           </Box>
         </Menu>

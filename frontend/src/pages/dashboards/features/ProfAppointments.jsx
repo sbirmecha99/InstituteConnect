@@ -1,129 +1,165 @@
-// ProfAppointments.jsx
-
 import {
   Box,
   Typography,
   Card,
   CardContent,
   Button,
-  TextField,
   Stack,
+  Snackbar,
+  Alert,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
+import { tokens } from "../../../theme";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const ProfAppointments = () => {
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+
   const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [slotInputs, setSlotInputs] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const res = await axios.get("http://localhost:3000/api/professors", {
-          withCredentials: true,
-        });
-        setAppointments(res.data);
-      } catch (err) {
-        console.error("Error fetching appointments", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAppointments();
-  }, []);
+  const now = new Date();
 
-  const handleUpdate = async (id, status, timeSlot) => {
+  const fetchAppointments = async () => {
     try {
-      await axios.put(
-        `http://localhost:3000/api/appointments/${id}`,
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        "http://localhost:3000/api/prof/appointments",
         {
-          status,
-          time_slot: timeSlot ? new Date(timeSlot).toISOString() : null,
-        },
-        { withCredentials: true }
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
-      // Refresh appointments after update
-      setAppointments((prev) =>
-        prev.map((appt) =>
-          appt.ID === id
-            ? { ...appt, Status: status, TimeSlot: timeSlot }
-            : appt
-        )
-      );
+
+      setAppointments(res.data.appointments || []);
     } catch (err) {
-      console.error("Failed to update appointment", err);
+      console.error("Error fetching appointments:", err);
     }
   };
 
-  if (loading) return <p>Loading Appointments...</p>;
+  useEffect(() => {
+    fetchAppointments();
+  }, []);
+
+  const handleUpdate = async (ID, status) => {
+    const slot = slotInputs[ID];
+
+    if (status === "accepted") {
+      if (!slot || isNaN(new Date(slot).getTime())) {
+        setSnackbar({
+          open: true,
+          message: "Please select a valid time slot.",
+        });
+        return;
+      }
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:3000/api/appointments/${ID}`,
+        {
+          status,
+          time_slot:
+            status === "accepted" ? new Date(slot).toISOString() : null,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchAppointments();
+    } catch (err) {
+      console.error("Failed to update appointment:", err);
+      setSnackbar({
+        open: true,
+        message: err.response?.data?.error || "Update failed.",
+      });
+    }
+  };
+
+  const pending = appointments.filter((a) => a.status === "pending");
 
   return (
-    <Box p={3}>
-      <Typography variant="h5" mb={3} gutterBottom>
-        Your Appointment Requests
+    <Box p={5}>
+      <Typography variant="h5" gutterBottom align="center" mb={2}>
+        <strong>Your Appointments</strong>
       </Typography>
-      {appointments.length === 0 ? (
-        <Typography>No appointments found</Typography>
+
+      {pending.length === 0 ? (
+        <Typography>No pending requests</Typography>
       ) : (
-        appointments.map((appt) => (
-          <Card key={appt.id} variant="outlined" sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography>
-                <strong>From:</strong>{" "} 
-                {appt.Student?.name?? <em>Unknown Student</em>}
+        pending.map((appt) => (
+          <Card key={appt.ID} sx={{ mb: 3 }}>
+            <CardContent sx={{ background: `${colors.primary[400]}` }}>
+              <Typography sx={{ mb: 2 }}>
+                <strong>From:</strong> {appt.student?.name ?? "Unknown"}
               </Typography>
-              <Typography>
-                <strong>Subject:</strong> {appt.Subject}
-              </Typography>
-              <Typography>
-                <strong>Status:</strong> {appt.Status}
+              <Typography sx={{ mb: 2 }}>
+                <strong>Subject:</strong> {appt.subject}
               </Typography>
 
-              {appt.Status === "Pending" && (
-                <Stack spacing={1} mt={2} direction="column">
-                  <TextField
-                    label="Slot Date & Time"
-                    type="datetime-local"
-                    size="small"
-                    InputLabelProps={{ shrink: true }}
-                    onChange={(e) => {
-                      appt._selectedSlot = e.target.value;
-                    }}
-                  />
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() =>
-                        handleUpdate(appt.ID, "Accepted", appt._selectedSlot)
-                      }
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => handleUpdate(appt.ID, "Declined", null)}
-                    >
-                      Decline
-                    </Button>
-                  </Stack>
-                </Stack>
-              )}
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  label="Pick a Date & Time"
+                  value={
+                    slotInputs[appt.ID] ? dayjs(slotInputs[appt.ID]) : null
+                  }
+                  onChange={(newValue) =>
+                    setSlotInputs((prev) => ({
+                      ...prev,
+                      [appt.ID]: newValue.toISOString(),
+                    }))
+                  }
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      sx: {
+                        width: 250,
+                        "& .MuiOutlinedInput-root": {
+                          backgroundColor: "background.paper",
+                        },
+                      },
+                    },
+                  }}
+                />
+              </LocalizationProvider>
 
-              {appt.Status === "Accepted" && (
-                <Typography mt={1}>
-                  <strong>Slot:</strong>{" "}
-                  {appt.TimeSlot
-                    ? dayjs(appt.TimeSlot).format("MMM D, YYYY h:mm A")
-                    : "Not set"}
-                </Typography>
-              )}
+              <Stack direction="row" spacing={1} mt={2}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={() => handleUpdate(appt.ID, "accepted")}
+                >
+                  Accept
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleUpdate(appt.ID, "declined")}
+                >
+                  Decline
+                </Button>
+              </Stack>
             </CardContent>
           </Card>
         ))
       )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ open: false, message: "" })}
+      >
+        <Alert severity="error" variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
