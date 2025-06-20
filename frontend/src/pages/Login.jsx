@@ -46,7 +46,7 @@ function Login() {
         console.log("Decoded JWT:", decoded);
 
         //storing
-        localStorage.setItem("user",JSON.stringify(decoded));
+        localStorage.setItem("user", JSON.stringify(decoded));
 
         const role = decoded.role;
         console.log("User role:", role);
@@ -56,19 +56,19 @@ function Login() {
         //redirction based on roles
         switch (role) {
           case "SuperAdmin":
-            window.location.href="/dashboard/dean";
+            window.location.href = "/dashboard/dean";
             break;
           case "Admin":
-            window.location.href="/dashboard/hod";
+            window.location.href = "/dashboard/hod";
             break;
           case "Prof":
-            window.location.href="/dashboard/professor";
+            window.location.href = "/dashboard/professor";
             break;
           case "Student":
-            window.location.href="/dashboard/student";
+            window.location.href = "/dashboard/student";
             break;
           default:
-            window.location.href="/dashboard";
+            window.location.href = "/dashboard";
         }
       }
     } catch (err) {

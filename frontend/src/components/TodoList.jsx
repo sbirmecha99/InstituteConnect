@@ -33,7 +33,7 @@ const TodoList = () => {
       <Stack spacing={2} direction="row" alignItems="center" mb={2}>
         <TextField
           fullWidth
-          size="medium"
+          size="small"
           label="New Task"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
@@ -70,7 +70,7 @@ const TodoList = () => {
         </Button>
       </Stack>
 
-      <List sx={{ mt: 2 }}>
+      <List>
         <TransitionGroup>
           {tasks.map((task) => (
             <Collapse key={task}>
@@ -87,9 +87,9 @@ const TodoList = () => {
               >
                 <ListItemText
                   primaryTypographyProps={{
-                    fontSize: "1rem", // or "16px"
-                    fontWeight: 500, // slightly bold
-                    fontFamily: "Poppins, sans-serif", // change font
+                    fontSize: "0.9rem", 
+                    fontWeight: 500, 
+                    fontFamily: "Poppins, sans-serif", 
                     letterSpacing: "0.5px",
                   }}
                   primary={task}
