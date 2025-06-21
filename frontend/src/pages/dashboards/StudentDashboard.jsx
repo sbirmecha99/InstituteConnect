@@ -15,6 +15,10 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { tokens } from "../../theme";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import HourglassTopIcon from "@mui/icons-material/HourglassTop";
+import CancelIcon from "@mui/icons-material/Cancel";
+
 
 const StudentDashboard = () => {
   const theme = useTheme();
@@ -31,7 +35,7 @@ const StudentDashboard = () => {
 
     let studentEmail = "";
     try {
-      const decoded = jwt_decode(token);
+      const decoded = jwtDecode(token);
       studentEmail = decoded.email;
     } catch (err) {
       console.error("JWT decode failed:", err);
@@ -49,12 +53,12 @@ const StudentDashboard = () => {
 
         const allAppointments = res.data.appointments || res.data || [];
 
-        const upcoming = allAppointments.filter(
-          (a) =>
-            a.status.toLowerCase() === "accepted" &&
-            new Date(a.time_slot) > new Date() &&
-            a.student?.email === studentEmail
+        const filteredAppointments = allAppointments.filter(
+          (a) => a.student?.email === studentEmail
         );
+
+        setAppointments(filteredAppointments);
+        
 
         setAppointments(upcoming);
       } catch (err) {
@@ -110,29 +114,63 @@ const StudentDashboard = () => {
                     variant="h5"
                     gutterBottom
                     mb={2}
-                    sx={{ color: colors.redAccent[200] }}
+                    sx={{ color: colors.redAccent[300] }}
                   >
-                    <strong>Upcoming Appointments</strong>
+                    <strong>Appointment Status</strong>
                   </Typography>
-
                   {appointments.length === 0 ? (
-                    <Typography>No upcoming appointments</Typography>
+                    <Typography>No appointments found</Typography>
                   ) : (
-                    <List dense>
-                      {appointments.map((appt) => (
-                        <ListItem key={appt.ID}>
-                          <ListItemText
-                            primary={`${appt.faculty?.name ?? "Unknown"} - ${
-                              appt.subject
-                            }`}
-                            secondary={dayjs(appt.time_slot).format(
-                              "MMM D, YYYY h:mm A"
-                            )}
-                          />
-                        </ListItem>
-                      ))}
+                    <List dense >
+                      {appointments.map((appt) => {
+                        let icon = null;
+                        let iconColor = "";
+
+                        if (appt.status.toLowerCase() === "accepted") {
+                          icon = (
+                            <CheckCircleIcon sx={{ color: "green", mr: 1 }} />
+                          );
+                        } else if (appt.status.toLowerCase() === "pending") {
+                          icon = (
+                            <HourglassTopIcon sx={{ color: "orange", mr: 1 }} />
+                          );
+                        } else if (appt.status.toLowerCase() === "declined") {
+                          icon = <CancelIcon sx={{ color: "red", mr: 1 }} />;
+                        }
+
+                        return (
+                          <ListItem key={appt.ID}>
+                            {icon}
+                            <ListItemText
+                              primary={`${appt.faculty?.name ?? "Unknown"} - ${
+                                appt.subject
+                              }`}
+                              secondary={
+                                <>
+                                  {dayjs(appt.time_slot).format(
+                                    "MMM D, YYYY h:mm A"
+                                  )}
+                                  {" • "}
+                                  <span style={{ textTransform: "capitalize" }}>
+                                    {appt.status}
+                                  </span>
+                                </>
+                              }
+                              primaryTypographyProps={{
+                                fontSize: "0.9rem",
+                                fontWeight: 600,
+                              }}
+                              secondaryTypographyProps={{
+                                fontSize: "0.8rem",
+                                color: "gray",
+                              }}
+                            />
+                          </ListItem>
+                        );
+                      })}
                     </List>
                   )}
+                  
                 </CardContent>
               </Card>
             </Grid>

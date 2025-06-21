@@ -62,6 +62,7 @@ func GetAppointmentsForStudent(c *fiber.Ctx) error {
 	if err := config.DB.
 		Where("student_id = ?", user.ID).
 		Preload("Faculty").
+		Preload("Student").
 		Find(&appts).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
 	}
@@ -80,6 +81,7 @@ func GetAppointmentsForProf(c *fiber.Ctx) error {
 	if err := config.DB.
 		Where("faculty_id = ?", user.ID).
 		Preload("Student").
+		Preload("Faculty").
 		Find(&appts).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
 	}
