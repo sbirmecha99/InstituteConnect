@@ -122,3 +122,18 @@ func UpdateAppointmentStatus(c *fiber.Ctx)error{
 
 	return c.JSON(appt)
 }
+//count
+func GetPendingAppointmentCount(c *fiber.Ctx) error {
+	user := c.Locals("user").(models.User)
+
+	var count int64
+	err := config.DB.Model(&models.Appointment{}).
+		Where("faculty_id = ? AND status = ?", user.ID, "pending").
+		Count(&count).Error
+
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "Could not fetch count"})
+	}
+
+	return c.JSON(fiber.Map{"pending": count})
+}

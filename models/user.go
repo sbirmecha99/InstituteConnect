@@ -5,10 +5,10 @@ import "gorm.io/gorm"
 type Role string
 
 const(
-    SuperAdmin Role = "superadmin"
-    Admin      Role = "admin"
-    Prof       Role = "prof"
-    Student    Role = "student"
+    SuperAdmin Role = "SuperAdmin"
+    Admin      Role = "Admin"
+    Prof       Role = "Prof"
+    Student    Role = "Student"
 )
 
 type User struct{

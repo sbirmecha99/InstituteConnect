@@ -24,19 +24,37 @@ func GetRoom(c *fiber.Ctx)error{
 	}
 	return c.JSON(room)
 }
+
 //create room
-func CreateRoom(c *fiber.Ctx) error {
-	room := new(models.Room)
-	if err := c.BodyParser(room); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "invalid input"})
+func BulkCreateRooms(c *fiber.Ctx) error {
+	var rooms []models.Room 
+	if err := c.BodyParser(&rooms); err != nil {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "Invalid JSON input",
+		})
 	}
 
-	if err := config.DB.Create(&room).Error; err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "could not create room"})
+	if len(rooms) == 0 {
+		return c.Status(400).JSON(fiber.Map{
+			"error": "No rooms provided",
+		})
 	}
 
-	return c.Status(201).JSON(room)
+	// Bulk insert
+	if err := config.DB.Create(&rooms).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": "Database error: " + err.Error(),
+		})
+	}
+
+	return c.Status(201).JSON(fiber.Map{
+		"message": "Rooms created successfully",
+		"count":   len(rooms),
+	})
 }
+
+
+
 //updating room
 func UpdateRoom(c *fiber.Ctx)error{
 	id:=c.Params("id")

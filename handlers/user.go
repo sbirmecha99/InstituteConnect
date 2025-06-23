@@ -3,6 +3,7 @@ package handlers
 import (
 	"instituteconnect/config"
 	"instituteconnect/models"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,16 +37,36 @@ func GetUser(c *fiber.Ctx)error{
 	return c.JSON(user)
 }
 //creatinf users
-func CreateUser(c *fiber.Ctx)error{
-	user:= new(models.User)
-	if err:=c.BodyParser(user); err!=nil{
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error":"cannot parse JSON"})
+func CreateUser(c *fiber.Ctx) error {
+	user:=c.Locals("user").(models.User)
+	if user.Role != "superadmin" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+			"error": "Only superadmins can create users",
+		})
 	}
-	if err:= config.DB.Create(&user).Error;err!=nil{
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error":"could not create user"})
+
+	if err := c.BodyParser(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Cannot parse JSON",
+		})
 	}
+	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not hash password",
+		})
+	}
+	user.Password = string(hashed)
+
+	if err := config.DB.Create(&user).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Could not create user",
+		})
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
+
 
 //updating users by ID
 

@@ -117,10 +117,10 @@ const Sidebar = () => {
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
-                ml="15px"
+                ml="10px"
               >
-                <Typography variant="h3" color={colors.grey[100]}>
-                  Profile
+                <Typography variant="h4" color={colors.grey[100]} fontWeight="600">
+                  InstituteConnect
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                   <MenuOutlinedIcon />

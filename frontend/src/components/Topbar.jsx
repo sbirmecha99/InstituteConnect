@@ -1,13 +1,15 @@
-import { Box,Icon,IconButton,useTheme } from "@mui/material"
-import { useContext } from "react"
+import { Badge, Box,Icon,IconButton,useTheme } from "@mui/material"
+import { useContext,useEffect,useState } from "react"
 import { ColorModeContext,themeSettings,tokens } from "../theme"
 import InputBase from "@mui/material/InputBase"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
 
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
+import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 
 
@@ -15,10 +17,26 @@ const Topbar = () => {
     const theme=useTheme();
     const colors=tokens(theme.palette.mode);
     const colorMode= useContext(ColorModeContext);
+    const navigate = useNavigate();
+    const [pendingCount,setPendingCount]=useState(0);
+
+    useEffect(()=>{
+      const token=localStorage.getItem("token");
+      axios.get("http://localhost:3000/api/prof/appointments/count",{
+        headers:{Authorization:`Bearer ${token}`},
+      })
+      .then((res)=>setPendingCount(res.data.pending||0))
+      .catch((err)=>console.error("Error fetching appointment count:",err));
+    },[]);
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}
-    height="64px" width="100%" boxShadow={1}
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      p={2}
+      height="64px"
+      width="100%"
+      boxShadow={1}
     >
       {/*search bar*/}
       <Box
@@ -51,8 +69,12 @@ const Topbar = () => {
           <SettingsOutlinedIcon />
         </IconButton>
 
-        <IconButton>
-          <PersonOutlinedIcon />
+        <IconButton
+          onClick={() => navigate("/dashboard/features/prof-appointments")}
+        >
+          <Badge badgeContent={pendingCount} color="error">
+            <AccountBoxOutlinedIcon />
+          </Badge>
         </IconButton>
       </Box>
     </Box>

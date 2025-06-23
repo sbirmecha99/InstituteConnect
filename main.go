@@ -24,7 +24,6 @@ func main() {
 	error1 := config.DB.AutoMigrate(
 		&models.User{},
 		&models.Room{},
-		&models.RoomSchedule{},
 		&models.Appointment{},
 		&models.Notification{},
 	)

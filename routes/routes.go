@@ -27,6 +27,9 @@ func UserRoutes(app *fiber.App){
 	app.Get("/api/student/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForStudent)
 	app.Get("/api/prof/appointments",middleware.JWTProtected(),handlers.GetAppointmentsForProf)
 	app.Put("/api/appointments/:id",middleware.JWTProtected(),handlers.UpdateAppointmentStatus)
+	app.Get("/api/prof/appointments/count",middleware.JWTProtected(),handlers.GetPendingAppointmentCount)
+
+	app.Post("/api/rooms/bulk",middleware.JWTProtected(),handlers.BulkCreateRooms)
 
 
 }

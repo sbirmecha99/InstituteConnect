@@ -24,7 +24,7 @@ func RoomRoutes(app *fiber.App) {
 
 	group.Get("/",handlers.GetRooms)
 	group.Get("/:id",handlers.GetRoom)
-	group.Post("/", middleware.JWTProtected(),handlers.CreateRoom)
+	group.Post("/", middleware.JWTProtected(),handlers.BulkCreateRooms)
 	group.Put("/:id",middleware.JWTProtected(), handlers.UpdateRoom)
 	group.Delete("/:id",middleware.JWTProtected(), handlers.DeleteRoom)
 }
