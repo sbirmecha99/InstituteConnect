@@ -26,6 +26,7 @@ func main() {
 		&models.Room{},
 		&models.Appointment{},
 		&models.Notification{},
+		&models.TimeSlot{},
 	)
 
 	if error1 != nil {

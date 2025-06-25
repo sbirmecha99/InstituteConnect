@@ -15,7 +15,7 @@ const(
 	Lg BuildingName = "LG"
 )
 type Room struct {
-    ID         uint      `gorm:"primaryKey"`
+    ID         uint      `gorm:"primaryKey" json:"id"`
     RoomNo string    `gorm:"uniqueIndex;not null" json:"room_no"` 
     Building   BuildingName    `gorm:"type varchar(10);not null" json:"building"`           
     Type       RoomType    `gorm:"type:varchar(20);default:'lecture'" json:"type"`           

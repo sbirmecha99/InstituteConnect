@@ -11,6 +11,8 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+ 
+
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -71,8 +73,11 @@ function Login() {
             window.location.href = "/dashboard";
         }
       }
+      
     } catch (err) {
-      setError(err.response?.data || "Login failed");
+      setSnackbarMessage(err.response?.data?.error || "Login Failed");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
   };
 

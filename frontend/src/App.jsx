@@ -18,6 +18,9 @@ import axios from "axios";
 import ProfileView from "./pages/dashboards/features/ProfileView";
 import ProfAppointments from "./pages/dashboards/features/ProfAppointments";
 import TodoList from "./components/TodoList";
+import StudentTimetable from "./components/StudentTimetable"
+import Calendar from "./components/Calendar";
+import RoomAllocation from "./pages/dashboards/features/RoomAllocation";
 
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
@@ -143,6 +146,30 @@ const App = () => {
           element={
             <ProtectedRoute>
               <TodoList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="student/timetable"
+          element={
+            <ProtectedRoute>
+              <StudentTimetable />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="features/calendar"
+          element={
+            <ProtectedRoute>
+              <Calendar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="features/roomallocation"
+          element={
+            <ProtectedRoute>
+              <RoomAllocation />
             </ProtectedRoute>
           }
         />

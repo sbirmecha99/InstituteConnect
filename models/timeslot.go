@@ -17,7 +17,7 @@ type TimeSlot struct {
 	Day        WeekDay   `gorm:"type:varchar(10);not null" json:"day"` 
 	StartTime  time.Time    `gorm:"not null" json:"start_time"` 
 	EndTime    time.Time    `gorm:"not null" json:"end_time"` 
-	// Relationships
+	
 	RoomID     uint      `json:"room_id"`
 	Room       Room      `gorm:"foreignKey:RoomID"`
 
@@ -26,5 +26,5 @@ type TimeSlot struct {
 	Department string `gorm:"not null"`
 
 	FacultyID  uint      `json:"faculty_id"` 
-	Faculty User                        
+	Faculty User           `gorm:"foreignKey:FacultyID"json="faculty"`             
 }

@@ -18,7 +18,8 @@ import { tokens } from "../../theme";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import CancelIcon from "@mui/icons-material/Cancel";
-
+import StudentTimetable from "../../components/StudentTimetable"
+import Calendar from "../../components/Calendar";
 
 const StudentDashboard = () => {
   const theme = useTheme();
@@ -85,7 +86,7 @@ const StudentDashboard = () => {
                   >
                     <strong>Classes for Today</strong>
                   </Typography>
-                  <Typography>Coming from Room Allotment DB</Typography>
+                  <StudentTimetable />
                 </CardContent>
               </Card>
             </Grid>
@@ -105,7 +106,6 @@ const StudentDashboard = () => {
                 </CardContent>
               </Card>
             </Grid>
-
             {/* Upcoming Appointments */}
             <Grid item xs={12} md={4}>
               <Card elevation={5} sx={{ background: colors.primary[400] }}>
@@ -121,7 +121,7 @@ const StudentDashboard = () => {
                   {appointments.length === 0 ? (
                     <Typography>No appointments found</Typography>
                   ) : (
-                    <List dense >
+                    <List dense>
                       {appointments.map((appt) => {
                         let icon = null;
                         let iconColor = "";
@@ -170,7 +170,6 @@ const StudentDashboard = () => {
                       })}
                     </List>
                   )}
-                  
                 </CardContent>
               </Card>
             </Grid>

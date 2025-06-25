@@ -233,7 +233,7 @@ body {
     flex: none;
     height: 200px;
     width: 100%;
-    background: url('/19198666.jpg') center/cover no-repeat;
+    background: url('') center/cover no-repeat;
   }
 
   .login-container {

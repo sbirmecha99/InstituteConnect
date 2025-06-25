@@ -144,6 +144,12 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(400).SendString("invalid input")
 	}
 
+	if len(input.Password) < 6 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Password must be at least 6 characters",
+		})
+	}
+
 	if input.Password != input.ConfirmPassword {
 		return c.Status(400).SendString("passwords do not match!")
 	}

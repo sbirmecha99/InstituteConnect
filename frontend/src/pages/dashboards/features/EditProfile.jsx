@@ -14,7 +14,7 @@ import {
 import { Upload, CheckCircle2 } from "lucide-react";
 
 
-const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH"];
+const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH","MC","BT","MME"];
 const programs = ["B.Tech", "M.Tech", "Dual"];
 
 const EditProfile = () => {
@@ -23,7 +23,7 @@ const EditProfile = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success"); // "success" | "error" | "info" | "warning"
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   const [name, setName] = useState("");
   const [program, setProgram] = useState("");

@@ -30,6 +30,9 @@ func UserRoutes(app *fiber.App){
 	app.Get("/api/prof/appointments/count",middleware.JWTProtected(),handlers.GetPendingAppointmentCount)
 
 	app.Post("/api/rooms/bulk",middleware.JWTProtected(),handlers.BulkCreateRooms)
+	app.Post("/api/create/timeslot",middleware.JWTProtected(),handlers.CreateTimeSlot)
+	app.Get("/api/faculty/timetable",middleware.JWTProtected(),handlers.GetFacultyTimetable)
+	app.Get("/api/student/timetable",middleware.JWTProtected(),handlers.GetStudentTimetable)
 
 
 }

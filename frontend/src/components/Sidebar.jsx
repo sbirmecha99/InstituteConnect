@@ -14,6 +14,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import defaultPfp from "../assets/guestuser.jpeg";
 
 const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -119,7 +120,11 @@ const Sidebar = () => {
                 alignItems="center"
                 ml="10px"
               >
-                <Typography variant="h4" color={colors.grey[100]} fontWeight="600">
+                <Typography
+                  variant="h4"
+                  color={colors.grey[100]}
+                  fontWeight="600"
+                >
                   InstituteConnect
                 </Typography>
                 <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
@@ -195,6 +200,13 @@ const Sidebar = () => {
                   selected={selected}
                   setSelected={setSelected}
                 />
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
               </>
             )}
 
@@ -242,6 +254,13 @@ const Sidebar = () => {
                   selected={selected}
                   setSelected={setSelected}
                 />
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
               </>
             )}
 
@@ -282,6 +301,13 @@ const Sidebar = () => {
                   selected={selected}
                   setSelected={setSelected}
                 />
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
               </>
             )}
 
@@ -312,6 +338,20 @@ const Sidebar = () => {
                   title="Edit Profile"
                   to="/dashboard/features/edit-profile"
                   icon={<EditOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Assign Room"
+                  to="/dashboard/features/roomallocation"
+                  icon={<MeetingRoomOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
