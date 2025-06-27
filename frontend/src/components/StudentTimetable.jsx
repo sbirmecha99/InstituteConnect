@@ -26,9 +26,9 @@ const StudentTimetable = () => {
     { label: "10:00 - 11:00", start: "10:00" },
     { label: "11:00 - 12:00", start: "11:00" },
     { label: "12:00 - 13:00", start: "12:00" },
+    { label: "13:00 - 14:00", start: "13:00" },
     { label: "14:00 - 15:00", start: "14:00" },
     { label: "15:00 - 16:00", start: "15:00" },
-    { label: "14:30 - 16:30", start: "14:30" },
   ];
 
   useEffect(() => {
@@ -36,16 +36,22 @@ const StudentTimetable = () => {
       .get("http://localhost:3000/api/student/timetable", {
         withCredentials: true,
       })
-      .then((res) => setSlots(res.data))
+      .then((res) => {
+        console.log("fetched slots:",res.data);
+        setSlots(res.data)
+  })
       .catch((err) => console.error("Error fetching slots", err))
       .finally(() => setLoading(false));
   }, []);
 
   const getClassAt = (day, timeStart) => {
     return slots.find(
-      (slot) => slot.day === day && slot.start_time.slice(11, 16) === timeStart
+      (slot) => slot.day === day && slot.start_time === timeStart
     );
   };
+  
+  
+  
 
   return (
     <TableContainer

@@ -34,7 +34,6 @@ const logout = async () => {
   window.location.href = "/";
 };
 
-
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -104,7 +103,6 @@ const Sidebar = () => {
     >
       <ProSidebar collapsed={isCollapsed}>
         <Menu iconShape="square">
-          {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
             icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
@@ -188,8 +186,16 @@ const Sidebar = () => {
                 />
                 <Item
                   title="Notifications"
-                  to="/notifications"
+                  to="/dashboard/get/notifications"
                   icon={<NotificationsOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -197,13 +203,6 @@ const Sidebar = () => {
                   title="Edit Profile"
                   to="/dashboard/features/edit-profile"
                   icon={<EditOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
-                  title="OrbitDesk"
-                  to="/dashboard/features/calendar"
-                  icon={<CalendarMonthOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -242,8 +241,16 @@ const Sidebar = () => {
                 />
                 <Item
                   title="Post Notification"
-                  to="/notifications/post"
+                  to="/dashboard/send/notifications"
                   icon={<NotificationsOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+
+                <Item
+                  title="OrbitDesk"
+                  to="/dashboard/features/calendar"
+                  icon={<CalendarMonthOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -251,13 +258,6 @@ const Sidebar = () => {
                   title="Edit Profile"
                   to="/dashboard/features/edit-profile"
                   icon={<EditOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
-                  title="OrbitDesk"
-                  to="/dashboard/features/calendar"
-                  icon={<CalendarMonthOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -295,16 +295,24 @@ const Sidebar = () => {
                   setSelected={setSelected}
                 />
                 <Item
-                  title="Edit Profile"
-                  to="features/edit-profile"
-                  icon={<EditOutlinedIcon />}
+                  title="Post Notification"
+                  to="/dashboard/send/notifications"
+                  icon={<NotificationsOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
+
                 <Item
                   title="OrbitDesk"
                   to="/dashboard/features/calendar"
                   icon={<CalendarMonthOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Edit Profile"
+                  to="features/edit-profile"
+                  icon={<EditOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
@@ -335,12 +343,13 @@ const Sidebar = () => {
                   setSelected={setSelected}
                 />
                 <Item
-                  title="Edit Profile"
-                  to="/dashboard/features/edit-profile"
-                  icon={<EditOutlinedIcon />}
+                  title="Post Notification"
+                  to="/dashboard/send/notifications"
+                  icon={<NotificationsOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />
+
                 <Item
                   title="Assign Room"
                   to="/dashboard/features/roomallocation"
@@ -352,6 +361,13 @@ const Sidebar = () => {
                   title="OrbitDesk"
                   to="/dashboard/features/calendar"
                   icon={<CalendarMonthOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+                <Item
+                  title="Edit Profile"
+                  to="/dashboard/features/edit-profile"
+                  icon={<EditOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />

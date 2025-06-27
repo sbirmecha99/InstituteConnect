@@ -77,8 +77,15 @@ const RoomAllocation = () => {
   }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const{name,value}=e.target;
+    const numericFields = ["faculty_id", "room_id", "semester"];
+    setForm({
+      ...form,
+      [name]: numericFields.includes(name) ? Number(value) : value,
+    });
   };
+//DEBUG
+console.log("Submitting form:", form);
 
   const handleSubmit = async () => {
     if (
@@ -190,6 +197,7 @@ const RoomAllocation = () => {
               name="room_id"
               value={form.room_id}
               onChange={handleChange}
+              variant="outlined"
             >
               {rooms.map((room) => (
                 <MenuItem key={room.id} value={room.id}>
@@ -234,12 +242,14 @@ const RoomAllocation = () => {
               type="number"
               value={form.semester}
               onChange={handleChange}
+              inputProps={{ min: 1, max: 8 }}
             />
           </Grid>
 
           <Grid item xs={4}>
             <TextField
               fullWidth
+              select
               label="Department"
               name="department"
               value={form.department}
