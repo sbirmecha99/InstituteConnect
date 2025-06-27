@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"time"
@@ -53,7 +52,6 @@ if err:=config.DB.Where("student_id=? AND faculty_id=?AND status=?",user.ID,facu
 }
 func GetAppointmentsForStudent(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
-	fmt.Println("student role check for apntmnt: ",user.Role)//debug
 	if user.Role != "Student" {
 		return c.Status(404).JSON(fiber.Map{"error": "only students can view appointments"})
 	}

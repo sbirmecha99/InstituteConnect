@@ -33,6 +33,12 @@ func UserRoutes(app *fiber.App){
 	app.Post("/api/create/timeslot",middleware.JWTProtected(),handlers.CreateTimeSlot)
 	app.Get("/api/faculty/timetable",middleware.JWTProtected(),handlers.GetFacultyTimetable)
 	app.Get("/api/student/timetable",middleware.JWTProtected(),handlers.GetStudentTimetable)
+	app.Put("/api/timeslot/:id",middleware.JWTProtected(), handlers.UpdateTimeSlot)
 
+	app.Post("/api/notifications",middleware.JWTProtected(),handlers.CreateNotification)
+	app.Get("/api/get/notifications",middleware.JWTProtected(),handlers.GetNotifications)
+	app.Get("/api/all/notifications",middleware.JWTProtected(),handlers.GetAllNotifications)
+	app.Delete("/api/notifications/:id",middleware.JWTProtected(),handlers.DeleteNotification)
+	app.Put("/api/editnotifications/:id",middleware.JWTProtected(),handlers.EditNotification)
 
 }
