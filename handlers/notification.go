@@ -79,6 +79,23 @@ func GetAllNotifications(c *fiber.Ctx) error {
 
 	return c.JSON(notifications)
 }
+func GetProfNotifications(c *fiber.Ctx) error {
+    user := c.Locals("user").(models.User)
+    if user.Role != "Prof" {
+        return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Unauthorized"})
+    }
+
+    var notifications []models.Notification
+    if err := config.DB.
+        Where("created_by = ?", user.ID).
+        Order("created_at DESC").
+        Find(&notifications).Error; err != nil {
+        return c.Status(500).JSON(fiber.Map{"error": "Could not fetch notifications"})
+    }
+
+    return c.JSON(notifications)
+}
+
 func DeleteNotification(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 	if user.Role != "Admin" && user.Role != "SuperAdmin" {

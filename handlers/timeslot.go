@@ -104,16 +104,19 @@ end = time.Date(2000, 1, 1, end.Hour(), end.Minute(), 0, 0, loc)
 }
 
 func GetFacultyTimetable(c *fiber.Ctx) error {
-	user := c.Locals("user").(models.User)
-	if user.Role != "Prof" {
+	user, ok := c.Locals("user").(models.User)
+	if !ok || user.Role != "Prof" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
 			"error": "Only Professors can access their timetable",
 		})
 	}
 
 	var slots []models.TimeSlot
-	if err := config.DB.Preload("Room").Preload("Faculty").
-		Where("faculty_id = ?", user.ID).Order("day, start_time").
+	if err := config.DB.
+		Preload("Room").
+		Preload("Faculty").
+		Where("faculty_id = ?", user.ID).
+		Order("day, start_time").
 		Find(&slots).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Could not fetch timetable"})
 	}
@@ -132,8 +135,10 @@ func GetFacultyTimetable(c *fiber.Ctx) error {
 			Department: slot.Department,
 		})
 	}
+
 	return c.JSON(response)
 }
+
 
 func GetStudentTimetable(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)

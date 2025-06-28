@@ -17,7 +17,7 @@ func UserRoutes(app *fiber.App){
     app.Get("/auth/google",controllers.GoogleLogin)
     app.Get("/auth/google/callback",controllers.GoogleCallback)
 
-    api.Get("/me",controllers.Me)
+    app.Get("/api/me",middleware.JWTProtected(),controllers.Me)
     app.Get("/api/auth/verify", controllers.AuthVerify)
 	app.Put("/api/profile",middleware.JWTProtected(),controllers.UpdateProfile)
 	app.Get("/api/professors",middleware.JWTProtected(), handlers.GetProfessors)
@@ -37,6 +37,7 @@ func UserRoutes(app *fiber.App){
 
 	app.Post("/api/notifications",middleware.JWTProtected(),handlers.CreateNotification)
 	app.Get("/api/get/notifications",middleware.JWTProtected(),handlers.GetNotifications)
+	app.Get("/api/prof/notifications",middleware.JWTProtected(),handlers.GetProfNotifications)
 	app.Get("/api/all/notifications",middleware.JWTProtected(),handlers.GetAllNotifications)
 	app.Delete("/api/notifications/:id",middleware.JWTProtected(),handlers.DeleteNotification)
 	app.Put("/api/editnotifications/:id",middleware.JWTProtected(),handlers.EditNotification)
