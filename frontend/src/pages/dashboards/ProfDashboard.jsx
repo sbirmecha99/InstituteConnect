@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { tokens } from "../../theme";
+import ProfessorTimetable from "../../components/ProfessorTimetable";
 
 const ProfDashboard = () => {
   const theme = useTheme();
@@ -70,7 +71,7 @@ const ProfDashboard = () => {
                     >
                       <strong> Classes for Today</strong>
                     </Typography>
-                    <Typography>Coming from Room Allotment DB</Typography>
+                    <ProfessorTimetable/>
                   </CardContent>
                 </Card>
               </Grid>

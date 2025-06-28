@@ -23,6 +23,7 @@ import Calendar from "./components/Calendar";
 import RoomAllocation from "./pages/dashboards/features/RoomAllocation";
 import SendNotifications from "./components/SendNotifications";
 import GetNotifications from "./components/GetNotifications";
+import LandingPage from "./pages/LandingPage";
 
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
@@ -73,7 +74,7 @@ const App = () => {
   const [theme, colorMode] = useMode();
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 

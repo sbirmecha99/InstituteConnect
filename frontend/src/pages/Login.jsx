@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
+import Header from "../components/Header";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -47,13 +48,15 @@ function Login() {
         const decoded = jwtDecode(token);
         console.log("Decoded JWT:", decoded);
 
-        //storing
-        localStorage.setItem("user", JSON.stringify(decoded));
+        const userRes = await axios.get("http://localhost:3000/api/me", {
+          withCredentials: true,
+        });
 
-        const role = decoded.role;
+        const fullUser = userRes.data.user;
+        localStorage.setItem("user", JSON.stringify(fullUser));
+
+        const role = fullUser.role;
         console.log("User role:", role);
-
-        localStorage.setItem("user", JSON.stringify(decoded));
 
         //redirction based on roles
         switch (role) {
@@ -85,6 +88,8 @@ function Login() {
     window.location.href = "http://localhost:3000/api/auth/google";
   };
   return (
+    <>
+    <Header/>
     <div className="auth-page">
       <div className="main-container">
         <div className="image-section-login"></div>
@@ -120,6 +125,7 @@ function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

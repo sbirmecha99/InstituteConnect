@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
-import { Snackbar, Alert } from "@mui/material"; // ✅ Import Alert too
+import { Snackbar, Alert } from "@mui/material";
+import Header from "../components/Header";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -60,68 +61,72 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-page">
-      <div className="main-container">
-        <div className="login-container">
-          <h2 className="form-title">InstituteConnect</h2>
-          <form className="login-form" onSubmit={handleRegister}>
-            <InputField
-              type="text"
-              placeholder="Full Name"
-              icon="person"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
-            <InputField
-              type="email"
-              placeholder="Institute Email address"
-              icon="mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <InputField
-              type="password"
-              placeholder="Password"
-              icon="lock"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <InputField
-              type="password"
-              placeholder="Confirm Password"
-              icon="lock"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+    <>
+      <Header />
 
-            <button className="register-button">Register</button>
-          </form>
-          <p className="signup-text">
-            Already have an account? <Link to="/login">Login</Link>
-          </p>
-          <p className="separator">
-            <span>or</span>
-          </p>
-          <SocialLogin />
+      <div className="auth-page">
+        <div className="main-container">
+          <div className="login-container">
+            <h2 className="form-title">InstituteConnect</h2>
+            <form className="login-form" onSubmit={handleRegister}>
+              <InputField
+                type="text"
+                placeholder="Full Name"
+                icon="person"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+              <InputField
+                type="email"
+                placeholder="Institute Email address"
+                icon="mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <InputField
+                type="password"
+                placeholder="Password"
+                icon="lock"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <InputField
+                type="password"
+                placeholder="Confirm Password"
+                icon="lock"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <button className="register-button">Register</button>
+            </form>
+            <p className="signup-text">
+              Already have an account? <Link to="/login">Login</Link>
+            </p>
+            <p className="separator">
+              <span>or</span>
+            </p>
+            <SocialLogin />
+          </div>
+          <div className="image-section-register"></div>
         </div>
-        <div className="image-section-register"></div>
-      </div>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          severity={snackbarSeverity}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={3000}
           onClose={() => setSnackbarOpen(false)}
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </div>
+          <Alert
+            severity={snackbarSeverity}
+            onClose={() => setSnackbarOpen(false)}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </div>
+    </>
   );
 };
 

@@ -251,6 +251,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 
 func Me(c *fiber.Ctx)error{
 	tokenStr := c.Cookies("token")
+	fmt.Println("Token from request:", tokenStr)
     if tokenStr == "" {
         return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthenticated"})
     }
@@ -273,6 +274,7 @@ if !ok {
 
     return c.JSON(fiber.Map{"user": user})
 }
+
 func AuthVerify(c *fiber.Ctx) error {
 	tokenStr := c.Cookies("token")
 	
@@ -330,11 +332,16 @@ func UpdateProfile(c *fiber.Ctx) error {
 	// Handle profile image upload
 	file, err := c.FormFile("image")
 	if err == nil {
-		filePath := fmt.Sprintf("./uploads/%d_%s", user.ID, file.Filename)
-		if err := c.SaveFile(file, filePath); err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save image"})
-		}
-		user.ProfilePicture = filePath
+		// Save the file on disk with absolute path
+filePath := fmt.Sprintf("./uploads/%d_%s", user.ID, file.Filename)
+if err := c.SaveFile(file, filePath); err != nil {
+    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save image"})
+}
+
+// Store relative URL to the file for the frontend to build the correct URL
+user.ProfilePicture = fmt.Sprintf("/uploads/%d_%s", user.ID, file.Filename)
+
+
 	}
 
 	// Prepare map of updates

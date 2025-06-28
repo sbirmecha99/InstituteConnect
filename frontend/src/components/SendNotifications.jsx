@@ -53,7 +53,7 @@ const SendNotifications = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/get/notifications", {
+      const res = await axios.get("http://localhost:3000/api/prof/notifications", {
         withCredentials: true,
       });
       if (Array.isArray(res.data)) {

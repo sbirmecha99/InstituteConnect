@@ -17,20 +17,17 @@ import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import defaultPfp from "../assets/guestuser.jpeg";
 
-const storedUser = JSON.parse(localStorage.getItem("user"));
-const role = storedUser?.role;
-
 const logout = async () => {
   try {
     await fetch("http://localhost:3000/api/logout", {
       method: "POST",
-      credentials: "include", // important to send the cookie!
+      credentials: "include",
     });
   } catch (err) {
     console.error("Logout failed", err);
   }
 
-  localStorage.clear(); // clear user state
+  localStorage.clear();
   window.location.href = "/";
 };
 
@@ -61,19 +58,14 @@ const Sidebar = () => {
 
   const [_, forceUpdate] = useState(0);
   useEffect(() => {
-    const interval = setInterval(() => {
-      const updatedUser = JSON.parse(localStorage.getItem("user"));
-      if (
-        updatedUser?.name !== storedUser?.name ||
-        updatedUser?.profile_picture !== storedUser?.profile_picture
-      ) {
-        window.location.reload(); // Reload to re-render sidebar with new name/image
-      }
-    }, 1000);
+    const handleStorageChange = () => forceUpdate((n) => n + 1);
 
-    return () => clearInterval(interval);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const role = storedUser?.role;
   if (!storedUser) {
     return <Typography sx={{ m: 2 }}>Not Logged In</Typography>;
   }

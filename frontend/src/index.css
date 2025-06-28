@@ -47,6 +47,7 @@ body {
   padding: 0;
   background: #dae2e7;
   font-family: "poppins", sans-serif;
+  cursor: url('https://upload.wikimedia.org/wikipedia/commons/1/12/Red_Pen_Cursor.png'), auto;
 }
 .auth-page {
   display: flex;
