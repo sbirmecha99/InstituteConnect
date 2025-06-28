@@ -4,113 +4,132 @@ import {
   PieChart,
   Pie,
   Cell,
-  Tooltip,
+  Tooltip as PieTooltip,
   BarChart,
   Bar,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip as BarTooltip,
   ResponsiveContainer,
+  LineChart,
+  Line,
+  Legend,
 } from "recharts";
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const sampleData = [
-  { name: "Professors", value: 15 },
-  { name: "Student Appointments", value: 47 },
-  { name: "Professor Appointments", value: 23 },
-  { name: "Notifications", value: 12 },
-];
 
 const DeanDashboard = () => {
   const theme = useTheme();
 
+  const roomOccupancy = [
+    { name: "Allocated", value: 75 },
+    { name: "Free", value: 25 },
+  ];
+
+  const appointmentsPerDept = [
+    { department: "CSE", requests: 12 },
+    { department: "ECE", requests: 8 },
+    { department: "ME", requests: 6 },
+    { department: "CE", requests: 4 },
+  ];
+
+  const notificationsOverTime = [
+    { date: "1 Jun", notifications: 5 },
+    { date: "8 Jun", notifications: 8 },
+    { date: "15 Jun", notifications: 6 },
+    { date: "22 Jun", notifications: 10 },
+    { date: "29 Jun", notifications: 7 },
+  ];
+
+  const COLORS = ["#1976d2", "#8884d8"];
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
-      <Typography
-        variant="h4"
-        sx={{
-          fontWeight: 600,
-          mb: 4,
-          textAlign: "center",
-        }}
-      >
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
         Dean Dashboard
       </Typography>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
+      <Grid container spacing={{ xs: 3, md: 5 }}>
+        {/* Appointment Requests Bar - full width */}
+        <Grid item xs={12} md={12}>
           <Paper
             elevation={4}
             sx={{
-              p: 4, // generous padding inside card
+              p: 6,
               borderRadius: 3,
               height: "100%",
+              minHeight: 500,
+              bgcolor:
+                theme.palette.mode === "dark" ? "rgb(52, 52, 90)" : "#fff",
+              color: theme.palette.text.primary,
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 3,
-                fontWeight: 600,
-                textAlign: "center",
-              }}
-            >
-              Data Distribution
+            <Typography variant="h6" gutterBottom>
+              Appointment Requests per Department
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={sampleData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label
-                >
-                  {sampleData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={appointmentsPerDept}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={theme.palette.divider}
+                />
+                <XAxis
+                  dataKey="department"
+                  stroke={theme.palette.text.primary}
+                />
+                <YAxis stroke={theme.palette.text.primary} />
+                <BarTooltip
+                  contentStyle={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#2e2e3e" : "#fff",
+                    color: theme.palette.text.primary,
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="requests" fill={theme.palette.primary.main} />
+              </BarChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        {/* Notifications Over Time Line - full width */}
+        <Grid item xs={12} md={12}>
           <Paper
             elevation={4}
             sx={{
-              p: 4, // generous padding inside card
+              p: 6,
               borderRadius: 3,
               height: "100%",
+              minHeight: 500,
+              bgcolor:
+                theme.palette.mode === "dark" ? "rgb(52, 52, 90)" : "#fff",
+              color: theme.palette.text.primary,
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 3,
-                fontWeight: 600,
-                textAlign: "center",
-              }}
-            >
-              Appointments Overview
+            <Typography variant="h6" gutterBottom>
+              Notifications Sent Over Time
             </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={sampleData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar
-                  dataKey="value"
-                  fill={theme.palette.primary.main}
-                  radius={[8, 8, 0, 0]}
+            <ResponsiveContainer width="100%" height={400}>
+              <LineChart data={notificationsOverTime}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={theme.palette.divider}
                 />
-              </BarChart>
+                <XAxis dataKey="date" stroke={theme.palette.text.primary} />
+                <YAxis stroke={theme.palette.text.primary} />
+                <BarTooltip
+                  contentStyle={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#2e2e3e" : "#fff",
+                    color: theme.palette.text.primary,
+                  }}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="notifications"
+                  stroke={theme.palette.secondary.main}
+                />
+              </LineChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
