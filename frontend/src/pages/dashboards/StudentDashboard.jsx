@@ -26,6 +26,18 @@ const StudentDashboard = () => {
   const colors = tokens(theme.palette.mode);
   const [appointments, setAppointments] = useState([]);
 
+  const formatSlot = (ts) => {
+    if (
+      !ts ||
+      ts === "0001-01-01T00:00:00Z" ||
+      ts === "0001-01-01T05:53:00+05:53" ||
+      !dayjs(ts).isValid()
+    )
+      return null;
+
+    return dayjs(ts).format("MMM D, YYYY h:mm A");
+  };
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -132,9 +144,9 @@ const StudentDashboard = () => {
                               }`}
                               secondary={
                                 <>
-                                  {dayjs(appt.time_slot).format(
-                                    "MMM D, YYYY h:mm A"
-                                  )}
+                                  {formatSlot(appt.time_slot) ??
+                                    "Time not allotted yet"}
+
                                   {" • "}
                                   <span style={{ textTransform: "capitalize" }}>
                                     {appt.status}
