@@ -5,14 +5,16 @@ import { jwtDecode } from "jwt-decode";
 import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
 import Header from "../components/Header";
+import { Snackbar, Alert } from "@mui/material";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
- 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
 
   const handleEmailLogin = async (e) => {
     e.preventDefault();
@@ -76,8 +78,8 @@ function Login() {
             window.location.href = "/dashboard";
         }
       }
-      
     } catch (err) {
+      console.error("Login failed:", err.response);
       setSnackbarMessage(err.response?.data?.error || "Login Failed");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
@@ -89,42 +91,58 @@ function Login() {
   };
   return (
     <>
-    <Header/>
-    <div className="auth-page">
-      <div className="main-container">
-        <div className="image-section-login"></div>
-        <div className="login-container">
-          <h2 className="form-title">Login</h2>
-          <form className="login-form" onSubmit={handleEmailLogin}>
-            <InputField
-              type="email"
-              placeholder="Institute Email address"
-              icon="mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <InputField
-              type="password"
-              placeholder="Password"
-              icon="lock"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <a href="#" className="forgot-pass-link">
-              Forgot Password?
-            </a>
-            <button className="login-button">Log In</button>
-          </form>
-          <p className="signup-text">
-            Don&apos;t have an account? <a href="/register">Register</a>{" "}
-          </p>
-          <p className="separator">
-            <span>or</span>{" "}
-          </p>
-          <SocialLogin />
+      <Header />
+      <div className="auth-page">
+        <div className="main-container">
+          <div className="image-section-login"></div>
+          <div className="login-container">
+            <h2 className="form-title">Login</h2>
+            <form className="login-form" onSubmit={handleEmailLogin}>
+              <InputField
+                type="email"
+                placeholder="Institute Email address"
+                icon="mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <InputField
+                type="password"
+                placeholder="Password"
+                icon="lock"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <a href="#" className="forgot-pass-link">
+                Forgot Password?
+              </a>
+              <button className="login-button">Log In</button>
+            </form>
+            <p className="signup-text">
+              Don&apos;t have an account? <a href="/register">Register</a>{" "}
+            </p>
+            <p className="separator">
+              <span>or</span>{" "}
+            </p>
+            <SocialLogin />
+          </div>
         </div>
       </div>
-    </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      ;
     </>
   );
 }

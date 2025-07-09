@@ -64,7 +64,7 @@ const EditProfile = () => {
     formData.append("program", program);
     formData.append("department", department);
     formData.append("semester", semester);
-    if (media.length > 0) formData.append("image", media[0]); 
+    if (media.length > 0) formData.append("image", media[0]);
 
     try {
       await axios.put("http://localhost:3000/api/profile", formData, {
@@ -73,15 +73,18 @@ const EditProfile = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      const updatedUser = { ...user, name, program, department, semester };
-      if (image) {
-        updatedUser.profile_picture = `/uploads/${image.name}`;
-      }
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      
+
+      const res = await axios.get("http://localhost:3000/api/me", {
+        withCredentials: true,
+      });
+      const updatedUser = res.data.user;
+      setUser(updatedUser); 
+      localStorage.setItem("user", JSON.stringify(updatedUser)); 
+
       setSnackbarMessage("Profile updated successfully");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
+      window.location.reload();
     } catch (err) {
       console.error(err);
       setSnackbarMessage("Failed to update profile");
@@ -89,6 +92,7 @@ const EditProfile = () => {
       setSnackbarOpen(true);
     }
   };
+  
 
   const handleFileChange = (e) => {
     if (e.target.files?.[0]) setImage(e.target.files[0]);

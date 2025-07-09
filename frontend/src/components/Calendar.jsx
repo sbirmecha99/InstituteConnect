@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import FullCalendar from "@fullcalendar/react";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import dayjs from "dayjs";
+import React, { useState, useRef, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   Dialog,
   DialogTitle,
@@ -11,166 +10,171 @@ import {
   DialogActions,
   Button,
   MenuItem,
-  Typography,
-  Box,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
-const reminderOptions = [0, 5, 10, 15, 30, 60]; // minutes before
+const localizer = momentLocalizer(moment);
 
-const Calendar = () => {
+const categories = [
+  { value: "High", color: "rgb(45, 168, 60)" },
+  { value: "Medium", color: "rgb(48, 166, 181)" },
+  { value: "Low", color: "rgb(239, 152, 13)" },
+];
+
+const MyTaskCalendar = () => {
   const [events, setEvents] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
   const [taskTitle, setTaskTitle] = useState("");
-  const [reminder, setReminder] = useState(0); // reminder in minutes
+  const [taskCategory, setTaskCategory] = useState(categories[0].value);
 
-  const calendarRef = useRef();
-  const audioRef = useRef(new Audio("/alarm.mp3")); // place your alarm.mp3 in public folder
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      events.forEach((ev) => {
-        const remindTime = dayjs(ev.start)
-          .subtract(ev.reminder, "minute")
-          .toDate();
-        if (dayjs(now).isAfter(remindTime) && !ev.notified) {
-          audioRef.current.play();
-          alert(
-            `Reminder: ${ev.title} starting at ${dayjs(ev.start).format(
-              "h:mm A"
-            )}`
-          );
-          ev.notified = true; // mark as notified
-        }
-      });
-    }, 30000); // check every 30s
-
-    return () => clearInterval(interval);
-  }, [events]);
-
-  const handleDateClick = (arg) => {
-    setSelectedDate(arg.date);
-    setOpen(true);
+  const handleSelectSlot = (slotInfo) => {
+    setSelectedSlot(slotInfo);
+    setTaskTitle("");
+    setTaskCategory(categories[0].value);
+    setSelectedEvent(null);
+    setDialogOpen(true);
   };
 
-  const handleEventAdd = () => {
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+    setTaskTitle(event.title);
+    setTaskCategory(event.category);
+    setDialogOpen(true);
+  };
+
+  const handleSave = () => {
     if (!taskTitle.trim()) return;
 
-    setEvents((prev) => [
-      ...prev,
-      {
+    if (selectedEvent) {
+      // Editing existing task
+      setEvents((prev) =>
+        prev.map((ev) =>
+          ev.id === selectedEvent.id
+            ? {
+                ...ev,
+                title: taskTitle,
+                category: taskCategory,
+                color: categories.find((c) => c.value === taskCategory).color,
+              }
+            : ev
+        )
+      );
+      setSnackbar({ open: true, message: "Task updated" });
+    } else {
+      // Adding new task
+      const newTask = {
         id: Date.now(),
         title: taskTitle,
-        start: selectedDate,
-        end: dayjs(selectedDate).add(1, "hour").toDate(),
-        color: "#1976d2",
-        reminder,
-        notified: false,
-      },
-    ]);
+        start: selectedSlot.start,
+        end: selectedSlot.end,
+        category: taskCategory,
+        color: categories.find((c) => c.value === taskCategory).color,
+      };
+      setEvents((prev) => [...prev, newTask]);
+      setSnackbar({ open: true, message: "Task added" });
+    }
 
-    setTaskTitle("");
-    setReminder(0);
-    setOpen(false);
+    setDialogOpen(false);
   };
 
-  const handleEventDropResize = (changeInfo) => {
-    setEvents((prev) =>
-      prev.map((ev) =>
-        ev.id === changeInfo.event.id
-          ? {
-              ...ev,
-              start: changeInfo.event.start,
-              end: changeInfo.event.end,
-              notified: false, // reset notification
-            }
-          : ev
-      )
-    );
+  const handleDelete = () => {
+    setEvents((prev) => prev.filter((ev) => ev.id !== selectedEvent.id));
+    setSnackbar({ open: true, message: "Task deleted" });
+    setDialogOpen(false);
   };
+
+  const eventStyleGetter = (event) => ({
+    style: {
+      backgroundColor: event.color,
+      color: "#fff",
+      borderRadius: "4px",
+      paddingLeft: "4px",
+      border: "none",
+    },
+  });
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h4" gutterBottom>
-        🗓️ My Tasks
-      </Typography>
-
-      <FullCalendar
-        ref={calendarRef}
-        plugins={[timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        allDaySlot={false}
-        slotMinTime="08:00:00"
-        slotMaxTime="22:00:00"
-        events={events}
-        height="auto"
-        editable
-        selectable
-        selectMirror
-        dateClick={handleDateClick}
-        eventDrop={handleEventDropResize}
-        eventResize={handleEventDropResize}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "timeGridWeek,timeGridDay",
-        }}
-        eventDisplay="block"
-        eventTimeFormat={{
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        }}
-        dayHeaderFormat={{ weekday: "short" }}
-        slotLabelFormat={{ hour: "numeric", minute: "2-digit", hour12: true }}
-        contentHeight="auto"
-      />
+    <>
+      <div style={{ height: "90vh", padding: 20 }}>
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          onSelectSlot={handleSelectSlot}
+          onSelectEvent={handleEventClick}
+          eventPropGetter={eventStyleGetter}
+          style={{ backgroundColor: "#fff", borderRadius: "8px" }}
+          defaultView="week"
+          toolbar
+          views={["week", "day"]}
+          timeslots={2}
+          step={30}
+          popup
+          components={{}}
+        />
+      </div>
 
       <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        maxWidth="xs"
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Add Task</DialogTitle>
+        <DialogTitle>{selectedEvent ? "Edit Task" : "Add Task"}</DialogTitle>
         <DialogContent
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           <TextField
-            label="Task title"
-            fullWidth
+            label="Task Title"
             value={taskTitle}
             onChange={(e) => setTaskTitle(e.target.value)}
             autoFocus
           />
-
           <TextField
             select
-            label="Reminder before start"
-            value={reminder}
-            onChange={(e) => setReminder(Number(e.target.value))}
+            label="Priority"
+            value={taskCategory}
+            onChange={(e) => setTaskCategory(e.target.value)}
           >
-            {reminderOptions.map((min) => (
-              <MenuItem key={min} value={min}>
-                {min === 0 ? "No reminder" : `${min} min before`}
+            {categories.map((cat) => (
+              <MenuItem key={cat.value} value={cat.value}>
+                {cat.value}
               </MenuItem>
             ))}
           </TextField>
-
-          <Typography variant="caption" color="text.secondary">
-            Task time: {dayjs(selectedDate).format("dddd, D MMM YYYY, h:mm A")}
-          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleEventAdd} variant="contained">
-            Add Task
+          {selectedEvent && (
+            <Button onClick={handleDelete} color="error">
+              Delete
+            </Button>
+          )}
+          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleSave} variant="contained">
+            {selectedEvent ? "Update" : "Add"}
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity="success" variant="filled">
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
-export default Calendar;
+export default MyTaskCalendar;

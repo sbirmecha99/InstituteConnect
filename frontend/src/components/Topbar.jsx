@@ -4,6 +4,7 @@ import { ColorModeContext,themeSettings,tokens } from "../theme"
 import InputBase from "@mui/material/InputBase"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useSearch } from "../pages/dashboards/features/SearchContext"
 
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -18,6 +19,7 @@ const Topbar = () => {
     const colors=tokens(theme.palette.mode);
     const colorMode= useContext(ColorModeContext);
     const navigate = useNavigate();
+    const{query,setQuery}=useSearch();
     const [pendingCount,setPendingCount]=useState(0);
 
     useEffect(()=>{
@@ -38,7 +40,7 @@ const Topbar = () => {
       width="100%"
       boxShadow={1}
     >
-      {/*search bar*/}
+      {/* search bar */}
       <Box
         display="flex"
         backgroundColor={colors.primary[400]}
@@ -46,7 +48,12 @@ const Topbar = () => {
         alignItems="center"
         px={1}
       >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
+        <InputBase
+          sx={{ ml: 2, flex: 1, color: colors.grey[100] }}
+          placeholder="Search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
 
         <IconButton type="button" sx={{ p: 1 }}>
           <SearchIcon />

@@ -153,13 +153,13 @@ const BookApp = () => {
             <Button
               fullWidth
               variant="contained"
-              color="red"
+              color="info"
               sx={{ mt: 3 }}
               onClick={handleSubmit}
               disabled={submitting}
             >
               {submitting ? (
-                <CircularProgress size={24} color="inherit" />
+                <CircularProgress size={24} color="success" />
               ) : (
                 "Request Appointment"
               )}

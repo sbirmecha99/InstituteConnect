@@ -38,13 +38,14 @@ const StudentTimetable = () => {
       })
       .then((res) => {
         console.log("fetched slots:",res.data);
-        setSlots(res.data)
+        setSlots(Array.isArray(res.data) ? res.data : []);
   })
       .catch((err) => console.error("Error fetching slots", err))
       .finally(() => setLoading(false));
   }, []);
 
   const getClassAt = (day, timeStart) => {
+    const safeSlots = Array.isArray(slots) ? slots : [];
     return slots.find(
       (slot) => slot.day === day && slot.start_time === timeStart
     );

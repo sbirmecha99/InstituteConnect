@@ -108,12 +108,18 @@ const ProfAppointments = () => {
                 <DateTimePicker
                   label="Pick a Date & Time"
                   value={
-                    slotInputs[appt.ID] ? dayjs(slotInputs[appt.ID]) : null
+                    slotInputs[appt.ID]
+                      ? dayjs(slotInputs[appt.ID])
+                      : appt.time_slot &&
+                        dayjs(appt.time_slot).isValid() &&
+                        !dayjs(appt.time_slot).isSame("0001-01-01T00:00:00Z")
+                      ? dayjs(appt.time_slot)
+                      : null
                   }
                   onChange={(newValue) =>
                     setSlotInputs((prev) => ({
                       ...prev,
-                      [appt.ID]: newValue.toISOString(),
+                      [appt.ID]: newValue?.toISOString() ?? null,
                     }))
                   }
                   slotProps={{

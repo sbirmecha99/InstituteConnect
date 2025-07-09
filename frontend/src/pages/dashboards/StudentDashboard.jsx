@@ -91,21 +91,6 @@ const StudentDashboard = () => {
               </Card>
             </Grid>
 
-            {/* To-Do List */}
-            <Grid item xs={12} md={4}>
-              <Card elevation={5} sx={{ background: colors.primary[400] }}>
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    mb={3}
-                    sx={{ color: colors.greenAccent[500] }}
-                  >
-                    <strong>To-Do List</strong>
-                  </Typography>
-                  <TodoList />
-                </CardContent>
-              </Card>
-            </Grid>
             {/* Upcoming Appointments */}
             <Grid item xs={12} md={4}>
               <Card elevation={5} sx={{ background: colors.primary[400] }}>

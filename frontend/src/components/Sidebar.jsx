@@ -15,7 +15,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import defaultPfp from "../assets/guestuser.jpeg";
+import defaultPfp from "../assets/user.png";
 
 const logout = async () => {
   try {
@@ -73,6 +73,9 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
+        height:"100vh",
+        display:"flex",
+        flexDirection:"column",
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
         },
@@ -315,7 +318,7 @@ const Sidebar = () => {
               <>
                 <Item
                   title="Dashboard"
-                  to="/superadmin/dashboard"
+                  to="/dashboard/dean"
                   icon={<HomeOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
@@ -329,7 +332,7 @@ const Sidebar = () => {
                 />
                 <Item
                   title="Manage Users"
-                  to="/users/manage"
+                  to="/dashboard/manage/users"
                   icon={<PeopleOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}

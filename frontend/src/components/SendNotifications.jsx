@@ -12,19 +12,16 @@ import {
   Alert,
   Divider,
   Typography,
-  useTheme,
+  Button,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import dayjs from "dayjs";
-import isSameDay from "dayjs";
-dayjs.extend(isSameDay);
 
 const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH", "MC", "BT", "MME"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const SendNotifications = () => {
-  const theme=useTheme();
   const [message, setMessage] = useState("");
   const [semester, setSemester] = useState("");
   const [department, setDepartment] = useState("");
@@ -35,7 +32,6 @@ const SendNotifications = () => {
     severity: "success",
   });
   const [messages, setMessages] = useState([]);
-
   const chatEndRef = useRef(null);
 
   useEffect(() => {
@@ -53,9 +49,12 @@ const SendNotifications = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/prof/notifications", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "http://localhost:3000/api/prof/notifications",
+        {
+          withCredentials: true,
+        }
+      );
       if (Array.isArray(res.data)) {
         setMessages(res.data);
       }
@@ -70,7 +69,6 @@ const SendNotifications = () => {
     }
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  
 
   const handleSend = async () => {
     if (!message.trim()) {
@@ -129,15 +127,8 @@ const SendNotifications = () => {
     }
   };
 
-  let lastDate = null;
-
   return (
-    <Container
-      maxWidth="sm"
-      sx={{
-        mt: 5,
-      }}
-    >
+    <Container maxWidth="md" sx={{ mt: 5 }}>
       <Paper
         elevation={3}
         sx={{
@@ -149,9 +140,10 @@ const SendNotifications = () => {
             theme.palette.mode === "dark" ? "rgb(23, 34, 52)" : "#fff",
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Notifications Chat
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Post Notification
         </Typography>
+
         <FormControlLabel
           control={
             <Checkbox
@@ -162,15 +154,15 @@ const SendNotifications = () => {
           label="Global Notification"
           sx={{ mb: 1 }}
         />
+
         {!global && (
-          <>
+          <Box sx={{ display: "flex", gap: 2, mb: 2, flexWrap: "wrap" }}>
             <TextField
               select
-              fullWidth
               label="Semester"
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ flex: 1, minWidth: 120 }}
             >
               {semesters.map((sem) => (
                 <MenuItem key={sem} value={sem}>
@@ -181,11 +173,10 @@ const SendNotifications = () => {
 
             <TextField
               select
-              fullWidth
               label="Department"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              sx={{ mb: 2 }}
+              sx={{ flex: 1, minWidth: 120 }}
             >
               {departments.map((dept) => (
                 <MenuItem key={dept} value={dept}>
@@ -193,96 +184,67 @@ const SendNotifications = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </>
+          </Box>
         )}
-        <Divider sx={{ my: 2 }} />
-        <Box
-          sx={{
-            flexGrow: 1,
-            overflowY: "auto",
-            flex: 1,
-            p: 2,
-            backgroundImage: "url('/chatbg2.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backdropFilter: "brightness(0.7)",
-            position: "relative",
-          }}
-        >
-          {messages.map((msg, idx) => {
-            const createdDate = dayjs(msg.CreatedAt);
-            const prevDate =
-              idx > 0 ? dayjs(messages[idx - 1].CreatedAt) : null;
-            const showDateDivider =
-              !prevDate || !createdDate.isSame(prevDate, "day");
 
-            return (
-              <Box key={msg.ID}>
-                {showDateDivider && (
-                  <Divider sx={{ my: 2}}>
-                    <Typography variant="caption" color="black">
-                      {createdDate.format("ddd, D MMM YYYY")}
-                    </Typography>
-                  </Divider>
-                )}
-                <Box
-                  sx={{ display: "flex", justifyContent: "flex-start", mb: 1 }}
-                >
-                  <Paper
-                    sx={{
-                      p: 1.5,
-                      bgcolor: (theme) =>
-                        theme.palette.mode === "dark" ? "#2e3b4e" : "#e0f7fa",
-                      color: (theme) => theme.palette.text.primary,
-                      borderRadius: 2,
-                      maxWidth: "80%",
-                    }}
-                  >
-                    <Typography
-                      variant="body1"
-                      sx={{ wordBreak: "break-word" }}
-                    >
-                      {msg.message}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        display: "block",
-                        textAlign: "right",
-                        color: "text.secondary",
-                      }}
-                    >
-                      {createdDate.format("D MMM, h:mm A")}
-                    </Typography>
-                  </Paper>
-                </Box>
-              </Box>
-            );
-          })}
-          <div ref={chatEndRef} />
+        <TextField
+          placeholder="Write your notification..."
+          multiline
+          minRows={2}
+          variant="outlined"
+          fullWidth
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          sx={{ mb: 2 }}
+        />
+
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <Button
+            variant="contained"
+            endIcon={<SendIcon />}
+            onClick={handleSend}
+            color="success"
+          >
+            Send Notification
+          </Button>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
+        <Divider sx={{ my: 1 }} />
 
-            pt: 1,
-          }}
-        >
-          <TextField
-            placeholder="Type your notification..."
-            variant="outlined"
-            fullWidth
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            sx={{ "& .MuiOutlinedInput-root": { borderRadius: "50px" } }}
-          />
-          <IconButton onClick={handleSend} sx={{ ml: 1 }}>
-            <SendIcon
-              sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#1976d2" }}
-            />
-          </IconButton>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          Sent Notifications
+        </Typography>
+
+        <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+          {messages.length === 0 ? (
+            <Typography>No notifications yet.</Typography>
+          ) : (
+            messages.map((msg) => (
+              <Paper
+                key={msg.ID}
+                elevation={1}
+                sx={{
+                  p: 2,
+                  mb: 2,
+                  borderRadius: 2,
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark" ? "#2e3b4e" : "#e0f7fa",
+                }}
+              >
+                <Typography variant="body1" sx={{ wordBreak: "break-word" }}>
+                  {msg.message}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ display: "block", textAlign: "right", mt: 1 }}
+                >
+                  {dayjs(msg.CreatedAt).format("D MMM, h:mm A")}
+                </Typography>
+              </Paper>
+            ))
+          )}
+          <div ref={chatEndRef} />
         </Box>
       </Paper>
 

@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Container,
   Paper,
   Typography,
   Box,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -12,16 +13,13 @@ import dayjs from "dayjs";
 const GetNotifications = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const chatEndRef = useRef(null);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const res = await axios.get(
           "http://localhost:3000/api/get/notifications",
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         setMessages(res.data);
       } catch (error) {
@@ -32,77 +30,52 @@ const GetNotifications = () => {
     };
     fetchNotifications();
   }, []);
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behaviour: "smooth" });
-  }, [messages]);
+
   return (
-    <Container maxWidth="sm" sx={{ mt: 5 }}>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          height: "80vh",
-          display: "flex",
-          flexDirection: "column",
-          backgroundImage: "url('/chatbg2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backdropFilter: "brightness(0.7)",
-          position: "relative",
-        }}
-      >
-        <Typography variant="h5" gutterBottom>
-          Notifications
-        </Typography>
-        <Box sx={{ flexGrow: 1, overflowY: "auto", p: 2 }}>
-          {loading ? (
-            <CircularProgress />
-          ) : messages.length === 0 ? (
-            <Typography>No notifications yet.</Typography>
-          ) : (
-            messages.map((msg) => (
-              <Box
-                key={msg.ID}
-                sx={{ display: "flex", justifyContent: "flex-start", mb: 1 }}
-              >
-                <Paper
-                  sx={{
-                    p: 1.5,
-                    bgcolor: "#e0f7fa",
-                    borderRadius: 2,
-                    maxWidth: "80%",
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ color: "black", fontWeight: 600 }}
-                  >
-                    {msg.poster?.name || "Unknown"} (
-                    {msg.poster?.role || "Unknown"})
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{ wordBreak: "break-word", color: "black" }}
-                  >
-                    {msg.message}
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      display: "block",
-                      textAlign: "right",
-                      color: "black",
-                    }}
-                  >
-                    {dayjs(msg.CreatedAt).format("D MMM, h:mm A")}
-                  </Typography>
-                </Paper>
-              </Box>
-            ))
-          )}
-          <div ref={chatEndRef} />
+    <Container maxWidth="md" sx={{ mt: 5 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Notifications
+      </Typography>
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={5}>
+          <CircularProgress />
         </Box>
-      </Paper>
+      ) : messages.length === 0 ? (
+        <Typography>No notifications yet.</Typography>
+      ) : (
+        <Box>
+          {messages.map((msg) => (
+            <Paper
+              key={msg.ID}
+              elevation={3}
+              sx={{
+                p: 2,
+                mb: 2,
+                borderRadius: 2,
+                backgroundColor: msg.read
+                  ? "background.paper"
+                  : "rgba(100,149,237,0.1)",
+              }}
+            >
+              <Typography variant="subtitle1" fontWeight="600" sx={{ mb: 0.5 }}>
+                {msg.poster?.name || "Unknown"} ({msg.poster?.role || "Unknown"}
+                )
+              </Typography>
+              <Typography variant="body1" color="text.primary" sx={{ mb: 1 }}>
+                {msg.message}
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ display: "block", textAlign: "right" }}
+              >
+                {dayjs(msg.CreatedAt).format("D MMM, h:mm A")}
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
+      )}
     </Container>
   );
 };

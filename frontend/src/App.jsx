@@ -24,6 +24,7 @@ import RoomAllocation from "./pages/dashboards/features/RoomAllocation";
 import SendNotifications from "./components/SendNotifications";
 import GetNotifications from "./components/GetNotifications";
 import LandingPage from "./pages/LandingPage";
+import ManageUsers from "./pages/ManageUsers";
 
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
@@ -35,11 +36,33 @@ const ThemedDashboardRoutes = () => {
         <CssBaseline />
         <div className="app">
           <main className="content">
-            <Box display="flex" height="100vh">
-              <Sidebar />
-              <Box flex={1}>
+            <Box height="100vh">
+              {/* Fixed Sidebar */}
+              <Box
+                sx={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  height: "100vh",
+                  width: "240px",
+                  zIndex: 1000,
+                }}
+              >
+                <Sidebar />
+              </Box>
+
+              {/* Main content area */}
+              <Box
+                sx={{
+                  marginLeft: "240px", // leave space for sidebar
+                  height: "100vh",
+                  overflowY: "auto", // only this scrolls
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <Topbar />
-                <Box p={2}>
+                <Box p={2} flex={1}>
                   <Outlet />
                 </Box>
               </Box>
@@ -49,6 +72,7 @@ const ThemedDashboardRoutes = () => {
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
+  
 };
 
 const App = () => {
@@ -188,7 +212,15 @@ const App = () => {
           path="get/notifications"
           element={
             <ProtectedRoute>
-              <GetNotifications/>
+              <GetNotifications />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="manage/users"
+          element={
+            <ProtectedRoute>
+              <ManageUsers />
             </ProtectedRoute>
           }
         />
