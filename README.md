@@ -106,10 +106,8 @@ npm run dev
 ## 🧪 Test Users (for demo)
 
 ```
-Student: student@example.com / 123456
-Professor: prof@example.com / 123456
-Admin: admin@example.com / 123456
-SuperAdmin: super@example.com / 123456
+Student: testuser@nitdgp.ac.in / testuser
+Professor: testprof.ece@nitdgp.ac.in / testprof
 ```
 
 ---
