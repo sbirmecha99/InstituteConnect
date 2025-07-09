@@ -74,7 +74,20 @@ func GetAppointmentsForProf(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "only professors can view appointments"})
 	}
 
-	
+	// Delete old accepted/declined appointments with valid time_slot
+	cutoff := time.Now().Add(-48 * time.Hour)
+
+	if err := config.DB.
+		Where("faculty_id = ? AND status IN ? AND time_slot IS NOT NULL AND time_slot != '0001-01-01 00:00:00' AND time_slot < ?", 
+			user.ID, 
+			[]string{"accepted", "declined"}, 
+			cutoff,
+		).
+		Delete(&models.Appointment{}).Error; err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": "failed to delete old appointments"})
+	}
+
+	// Then fetch remaining appointments
 	var appts []models.Appointment
 	if err := config.DB.
 		Where("faculty_id = ?", user.ID).
@@ -84,9 +97,8 @@ func GetAppointmentsForProf(c *fiber.Ctx) error {
 		return c.Status(500).JSON(fiber.Map{"error": "could not get appointments"})
 	}
 
-	return c.JSON(fiber.Map{"appointments":appts})
+	return c.JSON(fiber.Map{"appointments": appts})
 }
-
 
 func UpdateAppointmentStatus(c *fiber.Ctx)error{
 	user := c.Locals("user").(models.User)
@@ -111,8 +123,16 @@ func UpdateAppointmentStatus(c *fiber.Ctx)error{
 	}
 	appt.Status=models.AppointmentStatus(input.Status)
 	if input.Status == string(models.Accepted) {
-		appt.TimeSlot = input.TimeSlot
+		if !input.TimeSlot.IsZero() {
+			appt.TimeSlot = &input.TimeSlot
+		} else {
+			return c.Status(400).JSON(fiber.Map{"error": "Invalid time slot"})
+		}
+	} else {
+		// Clear time slot if declined
+		appt.TimeSlot = nil
 	}
+	
 
 	if err := config.DB.Save(&appt).Error; err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to update appointment"})

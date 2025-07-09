@@ -22,7 +22,7 @@ type Appointment struct {
 	Status    AppointmentStatus `json:"status" gorm:"type:varchar(20);default:'pending'"`
 	Subject string `json:"subject" gorm:"type:varchar(255);not null"`
 
-	TimeSlot time.Time `json:"time_slot"`
+	TimeSlot *time.Time `json:"time_slot"`
 	
 	Student User `gorm:"foreignKey:StudentID" json:"student"`
 	Faculty User `gorm:"foreignKey:FacultyID" json:"faculty"`

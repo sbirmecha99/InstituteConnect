@@ -211,16 +211,21 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 
 	var user models.User
 	result := config.DB.Where("email = ?", input.Email).First(&user)
-	log.Println("user found:",result.RowsAffected)
 
 	if result.RowsAffected == 0 || user.Password == "" {
 		log.Println("User not found or password missing")
-		return c.Status(fiber.StatusUnauthorized).SendString("user not found")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "user not found",
+		  })
+		  
 	}
 
 	if !utils.CheckPasswordHash(input.Password, user.Password) {
 		log.Println("Incorrect password")
-		return c.Status(fiber.StatusUnauthorized).SendString("incorrect password")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "incorrect password",
+		  })
+		  
 	}
 
 	//generate jwt
@@ -251,7 +256,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 
 func Me(c *fiber.Ctx)error{
 	tokenStr := c.Cookies("token")
-	fmt.Println("Token from request:", tokenStr)
+	
     if tokenStr == "" {
         return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthenticated"})
     }

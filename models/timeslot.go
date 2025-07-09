@@ -26,5 +26,5 @@ type TimeSlot struct {
 	Department string `gorm:"not null"`
 
 	FacultyID  uint      `json:"faculty_id"` 
-	Faculty User           `gorm:"foreignKey:FacultyID"json="faculty"`             
+	Faculty User           `gorm:"foreignKey:FacultyID" json="faculty"`             
 }
