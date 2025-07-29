@@ -78,9 +78,14 @@ const ThemedDashboardRoutes = () => {
 const App = () => {
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return; // Don't proceed if token is missing
+
       try {
         const res = await axios.get("http://localhost:3000/api/me", {
-          withCredentials: true, // IMPORTANT for sending cookies
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token here
+          },
         });
         localStorage.setItem("user", JSON.stringify(res.data.user));
       } catch (err) {
@@ -94,6 +99,7 @@ const App = () => {
       fetchUser();
     }
   }, []);
+
 
   const [theme, colorMode] = useMode();
   return (

@@ -1,136 +1,18 @@
 package controllers
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"instituteconnect/utils"
 	"log"
-	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
 
-func getGoogleOAuthConfig() *oauth2.Config {
-	return &oauth2.Config{
-		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
-		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
-		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		Scopes: []string{
-			"https://www.googleapis.com/auth/userinfo.email",
-			"https://www.googleapis.com/auth/userinfo.profile",
-		},
-		Endpoint: google.Endpoint,
-	}
-}
-
-func Protected(c *fiber.Ctx) error {
-	return c.SendString("accessed a protected route")
-}
-func GoogleLogin(c *fiber.Ctx) error {
-	oauthconfig := getGoogleOAuthConfig()
-	url := oauthconfig.AuthCodeURL("random-state", oauth2.AccessTypeOffline)
-	return c.Redirect(url)
-}
-
-func GoogleCallback(c *fiber.Ctx) error {
-	oauthconfig := getGoogleOAuthConfig()
-	code := c.Query("code")
-	token, err := oauthconfig.Exchange(context.Background(), code)
-	if err != nil {
-		log.Println("token exchaange offer", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	client := oauthconfig.Client(context.Background(), token)
-	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
-	if err != nil {
-		log.Println("error getting user info:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	defer resp.Body.Close()
-
-	var googleUser struct {
-		ID    string `json:"id"`
-		Email string `json:"email"`
-		Name  string `json:"name"`
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&googleUser); err != nil {
-		log.Println("failed to decode user info:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-
-	// insti mail check
-	if !strings.HasSuffix(googleUser.Email, "@nitdgp.ac.in") {
-		return c.Status(fiber.StatusForbidden).SendString("Only @nitdgp.ac.in emails allowed")
-	}
-
-	//if user already exists or not
-	var user models.User
-	result := config.DB.Where("google_id = ? OR email = ?", googleUser.ID, googleUser.Email).First(&user)
-
-	if result.RowsAffected == 0 {
-
-		//creating user
-		userRole := utils.DetermineRole(googleUser.Email)
-		user = models.User{
-			Name:     googleUser.Name,
-			Email:    googleUser.Email,
-			GoogleID: googleUser.ID,
-			Role:     models.Role(userRole),
-		}
-		config.DB.Create(&user)
-
-	} else {
-		if user.GoogleID == "" {
-			user.GoogleID = googleUser.ID
-			config.DB.Save(&user)
-		}
-	}
-	//generate jwt
-	jwtToken, err := utils.GenerateJWT(user.Email, string(user.Role),string(user.Name))
-	if err != nil {
-		log.Println("jwt generation failed:", err)
-		return c.SendStatus(http.StatusInternalServerError)
-	}
-	//send token and user data back
-	c.Cookie(&fiber.Cookie{
-		Name:     "token",
-		Value:    jwtToken,
-		HTTPOnly: true,
-		Secure:   false,
-		SameSite: "Lax",
-		Path: "/",
-	})
-	var redirectURL string
-switch user.Role {
-case "SuperAdmin":
-	redirectURL = "http://localhost:5173/dashboard/dean"
-	case "Admin":
-	redirectURL = "http://localhost:5173/dashboard/hod"
-case "Prof":
-	redirectURL = "http://localhost:5173/dashboard/professor"
-case "Student":
-	redirectURL = "http://localhost:5173/dashboard/student"
-default:
-	redirectURL = "http://localhost:5173/dashboard"
-}
-
-return c.Redirect(redirectURL)
-
-}
-
-// register
 func Register(c *fiber.Ctx) error {
 	var input struct {
 		Name            string `json:"name"`
@@ -252,32 +134,6 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
     return c.Redirect("/dashboard")
 }
 
-}
-
-func Me(c *fiber.Ctx)error{
-	tokenStr := c.Cookies("token")
-	
-    if tokenStr == "" {
-        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "unauthenticated"})
-    }
-
-    claims, err := utils.ValidateJWT(tokenStr)
-    if err != nil {
-        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token"})
-    }
-	email, ok := claims["email"].(string)
-if !ok {
-    return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-        "error": "Invalid token payload",
-    })
-}
-
-    var user models.User
-    if err := config.DB.Where("email = ?", email).First(&user).Error; err != nil {
-        return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "user not found"})
-    }
-
-    return c.JSON(fiber.Map{"user": user})
 }
 
 func AuthVerify(c *fiber.Ctx) error {

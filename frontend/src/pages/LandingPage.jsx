@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, Container } from "@mui/material";
-import InkTrail from "../components/InkTrail";
 import CountersSection from "../components/CounterSection";
 import Footer from "../components/Footer";
 

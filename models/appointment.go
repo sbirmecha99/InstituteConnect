@@ -23,6 +23,7 @@ type Appointment struct {
 	Subject string `json:"subject" gorm:"type:varchar(255);not null"`
 
 	TimeSlot *time.Time `json:"time_slot"`
+	Completed bool `json:"completed" gorm:"default:false"`
 	
 	Student User `gorm:"foreignKey:StudentID" json:"student"`
 	Faculty User `gorm:"foreignKey:FacultyID" json:"faculty"`

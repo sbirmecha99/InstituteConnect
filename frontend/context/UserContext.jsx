@@ -13,7 +13,8 @@ export const UserProvider = ({ children }) => {
     const fetchUser = async () => {
       try {
         const res = await axios.get("http://localhost:3000/api/me", {
-          withCredentials: true,
+          headers:token?{Authorization: `Bearer ${token}`}:{},
+          withCredentials: !token,
         });
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setUser(res.data.user);

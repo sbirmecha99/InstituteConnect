@@ -14,8 +14,7 @@ func UserRoutes(app *fiber.App){
     api.Post("/register",controllers.Register)
     app.Post("/api/login",controllers.EmailPasswordLogin)
 
-    app.Get("/auth/google",controllers.GoogleLogin)
-    app.Get("/auth/google/callback",controllers.GoogleCallback)
+    app.Post("/api/auth/google",controllers.GoogleLogin)
 
     app.Get("/api/me",middleware.JWTProtected(),controllers.Me)
     app.Get("/api/auth/verify", controllers.AuthVerify)

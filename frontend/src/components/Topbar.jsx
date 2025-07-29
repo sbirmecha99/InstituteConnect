@@ -22,6 +22,9 @@ const Topbar = () => {
     const{query,setQuery}=useSearch();
     const [pendingCount,setPendingCount]=useState(0);
 
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const role = storedUser?.role;
+
     useEffect(()=>{
       const token=localStorage.getItem("token");
       axios.get("http://localhost:3000/api/prof/appointments/count",{
