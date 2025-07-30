@@ -49,12 +49,12 @@ const Register = () => {
         setSnackbarOpen(true);
         setTimeout(() => navigate("/login"), 1500); // wait before redirect
       } else {
-        setSnackbarMessage(data?.error || "Registration failed");
+        setSnackbarMessage(data?.error || "Registration failed!");
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
-    } catch (error) {
-      setSnackbarMessage("Something went wrong. Please try again.");
+    } catch (err) {
+      setSnackbarMessage("Something went wrong! Please try again");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }

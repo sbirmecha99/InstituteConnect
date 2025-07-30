@@ -80,7 +80,15 @@ const Topbar = () => {
         </IconButton>
 
         <IconButton
-          onClick={() => navigate("/dashboard/features/prof-appointments")}
+          onClick={() => {
+            if (role === "Prof") {
+              navigate("/dashboard/features/prof-appointments");
+            } else if (role === "Student") {
+              navigate("/dashboard/features/book-appointments");
+            } else {
+              showSnackbar("Access denied or unknown role", "error");
+            }
+          }}
         >
           <Badge badgeContent={pendingCount} color="error">
             <AccountBoxOutlinedIcon />

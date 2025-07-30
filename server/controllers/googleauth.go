@@ -71,7 +71,7 @@ func GoogleLogin(c *fiber.Ctx) error {
 			Email:          email,
 			Name:           name,
 			Role:           "Student", // Default role, update logic if needed
-			ProfilePicture: "/uploads/guest_user.jpeg",
+			ProfilePicture: "/uploads/user.png",
 		}
 		if err := db.Create(&user).Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create user"})

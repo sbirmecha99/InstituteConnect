@@ -15,7 +15,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import defaultPfp from "../assets/user.png";
+import defaultPfp from "../assets/guestuser.jpeg";
 
 const logout = async () => {
   try {
@@ -73,9 +73,9 @@ const Sidebar = () => {
   return (
     <Box
       sx={{
-        height:"100vh",
-        display:"flex",
-        flexDirection:"column",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
         },
@@ -131,14 +131,14 @@ const Sidebar = () => {
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
-                  alt="profile-user"
-                  width="100px"
-                  height="100px"
                   src={
                     storedUser?.profile_picture
                       ? `http://localhost:3000${storedUser.profile_picture}`
                       : defaultPfp
                   }
+                  alt="profile-user"
+                  width="100px"
+                  height="100px"
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -263,7 +263,7 @@ const Sidebar = () => {
               <>
                 <Item
                   title="Dashboard"
-                  to="/admin/dashboard"
+                  to="/dashboard/hod"
                   icon={<HomeOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
@@ -272,20 +272,6 @@ const Sidebar = () => {
                   title="My Profile"
                   to="/dashboard/features/my-profile"
                   icon={<PersonOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
-                  title="Assign Room"
-                  to="/rooms/assign"
-                  icon={<MeetingRoomOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
-                  title="Appointments"
-                  to="/appointments"
-                  icon={<AccountBoxOutlinedIcon />}
                   selected={selected}
                   setSelected={setSelected}
                 />

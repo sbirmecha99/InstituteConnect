@@ -19,7 +19,7 @@ type User struct{
     Role     Role   `gorm:"not null" json:"role"`
     GoogleID string `gorm:"default:null"`
 
-    ProfilePicture string `gorm:"default:'/uploads/guest_user.jpeg'" json:"profile_picture"`
+    ProfilePicture string `json:"profile_picture"`
     Program string `json:"program"`
     Department string `json:"department"`
     Semester int `json:"semester"`

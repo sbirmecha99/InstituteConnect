@@ -23,7 +23,19 @@ func Register(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&input); err != nil {
 		fmt.Println("Parse error:", err)
-		return c.Status(400).SendString("invalid input")
+		return c.Status(400).JSON(fiber.Map{
+			"error":"invalid input",
+	})
+}
+	if strings.TrimSpace(input.Name)==""{
+		return c.Status(400).JSON(fiber.Map{
+			"error":"All fields are required",
+		})
+	}
+	if !strings.HasSuffix(strings.ToLower(input.Email), "@nitdgp.ac.in") {
+		return c.Status(400).JSON(fiber.Map{
+			"error":"Only @nitdgp.ac.in emails are allowed",
+	})
 	}
 
 	if len(input.Password) < 6 {
@@ -64,6 +76,7 @@ func Register(c *fiber.Ctx) error {
 		Email:    input.Email,
 		Password: string(hashed),
 		Role:     models.Role(utils.DetermineRole(input.Email)),
+		ProfilePicture: "/uploads/user.png",
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
@@ -190,16 +203,14 @@ func UpdateProfile(c *fiber.Ctx) error {
 		semester = &s
 	}
 
-	// Handle profile image upload
 	file, err := c.FormFile("image")
 	if err == nil {
-		// Save the file on disk with absolute path
+		
 filePath := fmt.Sprintf("./uploads/%d_%s", user.ID, file.Filename)
 if err := c.SaveFile(file, filePath); err != nil {
     return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save image"})
 }
 
-// Store relative URL to the file for the frontend to build the correct URL
 user.ProfilePicture = fmt.Sprintf("/uploads/%d_%s", user.ID, file.Filename)
 
 
@@ -233,15 +244,15 @@ user.ProfilePicture = fmt.Sprintf("/uploads/%d_%s", user.ID, file.Filename)
 	})
 }
 func Logout(c *fiber.Ctx) error {
-	// Explicitly expire the cookie
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    "",
 		Expires:  time.Now().Add(-1 * time.Hour),
 		MaxAge:   -1,
 		HTTPOnly: true,
-		Path:     "/",       // must match login path
-		Secure:   false,     // set to true in production
+		Path:     "/",       
+		Secure:   false,   
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
