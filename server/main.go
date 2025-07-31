@@ -4,6 +4,7 @@ import (
 	"instituteconnect/config"
 	"instituteconnect/models"
 	"instituteconnect/routes"
+	"os"
 
 	"log"
 
@@ -13,11 +14,13 @@ import (
 )
 
 func main() {
-
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("error loading env file")
+	
+if os.Getenv("RENDER") == "" {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, continuing with environment variables")
 	}
+}
+
 
 	config.ConnectDatabase()
 
