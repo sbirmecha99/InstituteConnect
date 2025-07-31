@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	
+
 if os.Getenv("RENDER") == "" {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, continuing with environment variables")
@@ -60,9 +60,8 @@ if os.Getenv("RENDER") == "" {
 
 	log.Println("[debug]starting server on 3000")
 
-	err = (app.Listen(":3000"))
-	if err != nil {
-		log.Println("server failed to start: ", err)
-	}
+	if err := app.Listen(":3000"); err != nil {
+	log.Println("server failed to start: ", err)
+}
 
 }
