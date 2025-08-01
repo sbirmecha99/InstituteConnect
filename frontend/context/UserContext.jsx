@@ -6,15 +6,23 @@ export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("user");
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser || storedUser === "undefined" || storedUser === "null") {
+        return null;
+      }
+      return JSON.parse(storedUser);
+    } catch (err) {
+      console.error("Failed to parse stored user:", err);
+      return null;
+    }
   });
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/register`, {
-          headers:token?{Authorization: `Bearer ${token}`}:{},
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           withCredentials: !token,
         });
         localStorage.setItem("user", JSON.stringify(res.data.user));
