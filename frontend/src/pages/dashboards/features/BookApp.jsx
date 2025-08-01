@@ -37,7 +37,7 @@ const BookApp = () => {
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
-        const res = await axios.get("`${BASE_URL}/api/professors", {
+        const res = await axios.get(`${BASE_URL}/api/professors`, {
           withCredentials: true,
         });
         setFacultyList(res.data);
