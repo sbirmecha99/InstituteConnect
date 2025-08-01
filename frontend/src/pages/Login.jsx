@@ -51,7 +51,7 @@ function Login() {
         const decoded = jwtDecode(token);
         console.log("Decoded JWT:", decoded);
 
-        const userRes = await axios.get("`${BASE_URL}/api/me", {
+        const userRes = await axios.get(`${BASE_URL}/api/me`, {
           withCredentials: true,
         });
 
