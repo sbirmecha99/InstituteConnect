@@ -134,7 +134,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Path:     "/",
-		Secure: false,
+		Secure: true,
 	})
 
 	if strings.Contains(c.Get("Accept"), "application/json") {
@@ -252,7 +252,7 @@ func Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		HTTPOnly: true,
 		Path:     "/",       
-		Secure:   false,   
+		Secure:   true,   
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

@@ -92,7 +92,7 @@ func GoogleLogin(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
+		Secure:   true, // Set to true in production with HTTPS
 		SameSite: "Lax",
 	})
 
