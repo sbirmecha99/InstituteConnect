@@ -16,10 +16,11 @@ import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import defaultPfp from "../assets/guestuser.jpeg";
+import BASE_URL from "../api/config";
 
 const logout = async () => {
   try {
-    await fetch("http://localhost:3000/api/logout", {
+    await fetch(`${BASE_URL}/api/logout`, {
       method: "POST",
       credentials: "include",
     });
@@ -133,7 +134,7 @@ const Sidebar = () => {
                 <img
                   src={
                     storedUser?.profile_picture
-                      ? `http://localhost:3000${storedUser.profile_picture}`
+                      ? `${BASE_URL}${storedUser.profile_picture}`
                       : defaultPfp
                   }
                   alt="profile-user"

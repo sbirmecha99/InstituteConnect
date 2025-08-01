@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import dayjs from "dayjs";
+import BASE_URL from "../api/config";
 
 const GetNotifications = () => {
   const [messages, setMessages] = useState([]);
@@ -17,10 +18,9 @@ const GetNotifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/get/notifications",
-          { withCredentials: true }
-        );
+        const res = await axios.get(`${BASE_URL}/api/get/notifications`, {
+          withCredentials: true,
+        });
         setMessages(res.data);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);

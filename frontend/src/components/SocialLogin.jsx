@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { Snackbar, Alert } from "@mui/material";
+import BASE_URL from "../api/config";
 
 const SocialLogin = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const SocialLogin = () => {
     try {
       const credential = credentialResponse.credential;
       const res = await axios.post(
-        "http://localhost:3000/api/auth/google",
+        `${BASE_URL}/api/auth/google`,
         { credential },
         {
           withCredentials: true,
@@ -37,7 +38,7 @@ const SocialLogin = () => {
         localStorage.setItem("token", token);
         const decoded = jwtDecode(token);
 
-        const userRes = await axios.get("http://localhost:3000/api/me", {
+        const userRes = await axios.get(`${BASE_URL}/api/me`, {
           withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -74,7 +75,6 @@ const SocialLogin = () => {
         "Google login failed.";
       showSnackbar(errorMessage, "error");
     }
-
   };
 
   return (

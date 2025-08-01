@@ -12,7 +12,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import axios from "axios";
-
+import BASE_URL from "../../../api/config";
 
 const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH", "MC", "BT", "MME"];
 
@@ -51,7 +51,7 @@ const RoomAllocation = () => {
 
   const fetchRooms = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/rooms", {
+      const res = await axios.get(`${BASE_URL}/api/rooms`, {
         withCredentials: true,
       });
       setRooms(res.data);
@@ -62,7 +62,7 @@ const RoomAllocation = () => {
 
   const fetchProfs = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/professors", {
+      const res = await axios.get(`${BASE_URL}/api/professors`, {
         withCredentials: true,
       });
       setProfs(res.data);
@@ -77,15 +77,15 @@ const RoomAllocation = () => {
   }, []);
 
   const handleChange = (e) => {
-    const{name,value}=e.target;
+    const { name, value } = e.target;
     const numericFields = ["faculty_id", "room_id", "semester"];
     setForm({
       ...form,
       [name]: numericFields.includes(name) ? Number(value) : value,
     });
   };
-//DEBUG
-console.log("Submitting form:", form);
+  //DEBUG
+  console.log("Submitting form:", form);
 
   const handleSubmit = async () => {
     if (
@@ -107,13 +107,9 @@ console.log("Submitting form:", form);
 
     setLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/create/timeslot",
-        form,
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${BASE_URL}/api/create/timeslot`, form, {
+        withCredentials: true,
+      });
       setSnackbar({
         open: true,
         message: "Room allocated successfully!",

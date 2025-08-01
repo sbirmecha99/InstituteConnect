@@ -19,6 +19,7 @@ import {
 import { ExpandLess, ExpandMore, Edit, Delete } from "@mui/icons-material";
 import axios from "axios";
 import { useSearch } from "./dashboards/features/SearchContext";
+import BASE_URL from "../api/config";
 
 const ManageUsers = () => {
   const [professors, setProfessors] = useState([]);
@@ -35,10 +36,10 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       const [profRes, studRes] = await Promise.all([
-        axios.get("http://localhost:3000/api/professors", {
+        axios.get(`${BASE_URL}/api/professors`, {
           withCredentials: true,
         }),
-        axios.get("http://localhost:3000/api/users", { withCredentials: true }),
+        axios.get(`${BASE_URL}/api/users`, { withCredentials: true }),
       ]);
       setProfessors(profRes.data);
       const studentsOnly = studRes.data.filter((u) => u.role === "Student");
@@ -59,7 +60,7 @@ const ManageUsers = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/api/users/${id}`, {
+      await axios.delete(`${BASE_URL}/api/users/${id}`, {
         withCredentials: true,
       });
       fetchUsers();
@@ -354,7 +355,7 @@ const ManageUsers = () => {
                   payload.department = editUser.department;
                 }
                 await axios.put(
-                  `http://localhost:3000/api/users/${
+                  `${BASE_URL}/api/users/${
                     editUser.id || editUser.ID
                   }`,
                   payload,

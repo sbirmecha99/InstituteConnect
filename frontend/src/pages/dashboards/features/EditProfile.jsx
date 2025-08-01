@@ -9,12 +9,12 @@ import {
   Typography,
   CircularProgress,
   Snackbar,
-  Alert
+  Alert,
 } from "@mui/material";
 import { Upload, CheckCircle2 } from "lucide-react";
+import BASE_URL from "../../../api/config";
 
-
-const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH","MC","BT","MME"];
+const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH", "MC", "BT", "MME"];
 const programs = ["B.Tech", "M.Tech", "Dual"];
 
 const EditProfile = () => {
@@ -30,11 +30,11 @@ const EditProfile = () => {
   const [department, setDepartment] = useState("");
   const [semester, setSemester] = useState("");
   const [image, setImage] = useState(null);
-  const[media,setMedia]=useState([]);
+  const [media, setMedia] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/me", { withCredentials: true })
+      .get(`${BASE_URL}/api/me`, { withCredentials: true })
       .then((res) => {
         const userData = res.data.user;
         setUser(userData);
@@ -67,19 +67,19 @@ const EditProfile = () => {
     if (media.length > 0) formData.append("image", media[0]);
 
     try {
-      await axios.put("http://localhost:3000/api/profile", formData, {
+      await axios.put(`${BASE_URL}/api/profile`, formData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      const res = await axios.get("http://localhost:3000/api/me", {
+      const res = await axios.get(`${BASE_URL}/api/me`, {
         withCredentials: true,
       });
       const updatedUser = res.data.user;
-      setUser(updatedUser); 
-      localStorage.setItem("user", JSON.stringify(updatedUser)); 
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
 
       setSnackbarMessage("Profile updated successfully");
       setSnackbarSeverity("success");
@@ -92,7 +92,6 @@ const EditProfile = () => {
       setSnackbarOpen(true);
     }
   };
-  
 
   const handleFileChange = (e) => {
     if (e.target.files?.[0]) setImage(e.target.files[0]);
@@ -196,78 +195,74 @@ const EditProfile = () => {
       )}
       {/* Media Upload UI */}
       <Box>
-  <Typography fontWeight="bold" mb={1}>
-    Upload Profile Picture (Optional)
-  </Typography>
+        <Typography fontWeight="bold" mb={1}>
+          Upload Profile Picture (Optional)
+        </Typography>
 
-  <label
-    htmlFor="media"
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "2px dashed #ccc",
-      borderRadius: "12px",
-      padding: "24px",
-      cursor: "pointer",
-      transition: "border-color 0.3s, background-color 0.3s",
-    }}
-    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#00897B")}
-    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#ccc")}
-  >
-    <Upload color="#999" size={32} />
-    <Typography variant="body2" color="textSecondary">
-      <strong style={{ color: "#00897B" }}>Click to upload</strong> or drag and drop
-    </Typography>
-    <Typography variant="caption" color="textSecondary">
-      PNG, JPG up to 10MB
-    </Typography>
-    <input
-      id="media"
-      type="file"
-      accept="image/*"
-      onChange={(e) => {
-        // ✅ Only store the first file for single profile picture
-        if (e.target.files?.[0]) setMedia([e.target.files[0]]);
-      }}
-      style={{ display: "none" }}
-    />
-  </label>
-
-  {media.length > 0 && (
-    <Box mt={2}>
-      {media.map((file, index) => (
-        <Box
-          key={index}
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          border="1px solid #c8e6c9"
-          borderRadius="8px"
-          bgcolor="#e8f5e9"
-          p={1}
-          mb={1}
+        <label
+          htmlFor="media"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "2px dashed #ccc",
+            borderRadius: "12px",
+            padding: "24px",
+            cursor: "pointer",
+            transition: "border-color 0.3s, background-color 0.3s",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#00897B")}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#ccc")}
         >
-          <Box display="flex" alignItems="center" gap={1}>
-            <CheckCircle2 size={16} color="#43a047" />
-            <Typography variant="body2" color="green">
-              {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
-            </Typography>
-          </Box>
-          <Button
-            onClick={() => setMedia([])}
-            size="small"
-            color="error"
-          >
-            Remove
-          </Button>
-        </Box>
-      ))}
-    </Box>
-  )}
-</Box>
+          <Upload color="#999" size={32} />
+          <Typography variant="body2" color="textSecondary">
+            <strong style={{ color: "#00897B" }}>Click to upload</strong> or
+            drag and drop
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            PNG, JPG up to 10MB
+          </Typography>
+          <input
+            id="media"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              // ✅ Only store the first file for single profile picture
+              if (e.target.files?.[0]) setMedia([e.target.files[0]]);
+            }}
+            style={{ display: "none" }}
+          />
+        </label>
 
+        {media.length > 0 && (
+          <Box mt={2}>
+            {media.map((file, index) => (
+              <Box
+                key={index}
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                border="1px solid #c8e6c9"
+                borderRadius="8px"
+                bgcolor="#e8f5e9"
+                p={1}
+                mb={1}
+              >
+                <Box display="flex" alignItems="center" gap={1}>
+                  <CheckCircle2 size={16} color="#43a047" />
+                  <Typography variant="body2" color="green">
+                    {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                  </Typography>
+                </Box>
+                <Button onClick={() => setMedia([])} size="small" color="error">
+                  Remove
+                </Button>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
 
       <Button type="submit" variant="contained" color="secondary">
         Save Changes
@@ -286,7 +281,6 @@ const EditProfile = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      
     </Box>
   );
 };

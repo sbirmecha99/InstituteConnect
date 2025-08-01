@@ -14,6 +14,7 @@ import {
   Chip,
   useTheme,
 } from "@mui/material";
+import BASE_URL from "../api/config";
 
 const ProfessorTimetable = () => {
   const theme = useTheme();
@@ -33,12 +34,12 @@ const ProfessorTimetable = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/faculty/timetable", {
+      .get(`${BASE_URL}/api/faculty/timetable`, {
         withCredentials: true,
       })
       .then((res) => {
         console.log("Fetched prof slots:", res.data);
-        setSlots(res.data||[]);
+        setSlots(res.data || []);
       })
       .catch((err) => console.error("Error fetching prof timetable", err))
       .finally(() => setLoading(false));

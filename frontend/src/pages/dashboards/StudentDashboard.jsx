@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import TodoList from "../../components/TodoList";
 import {
   Box,
@@ -18,8 +18,9 @@ import { tokens } from "../../theme";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import CancelIcon from "@mui/icons-material/Cancel";
-import StudentTimetable from "../../components/StudentTimetable"
+import StudentTimetable from "../../components/StudentTimetable";
 import Calendar from "../../components/Calendar";
+import BASE_URL from "../../api/config";
 
 const StudentDashboard = () => {
   const theme = useTheme();
@@ -37,7 +38,7 @@ const StudentDashboard = () => {
 
     return dayjs(ts).format("MMM D, YYYY h:mm A");
   };
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -57,12 +58,9 @@ const StudentDashboard = () => {
 
     const fetchAppointments = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/student/appointments",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get(`${BASE_URL}/api/student/appointments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
         const allAppointments = res.data.appointments || res.data || [];
 
@@ -71,7 +69,6 @@ const StudentDashboard = () => {
         );
 
         setAppointments(filteredAppointments);
-        
 
         setAppointments(upcoming);
       } catch (err) {

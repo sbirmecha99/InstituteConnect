@@ -16,6 +16,7 @@ import { tokens } from "../../../theme";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import BASE_URL from "../../../api/config";
 
 const ProfAppointments = () => {
   const theme = useTheme();
@@ -31,7 +32,7 @@ const ProfAppointments = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "http://localhost:3000/api/prof/appointments",
+        `${BASE_URL}/api/prof/appointments`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -63,7 +64,7 @@ const ProfAppointments = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3000/api/appointments/${ID}`,
+        `${BASE_URL}/api/appointments/${ID}`,
         {
           status,
           time_slot:

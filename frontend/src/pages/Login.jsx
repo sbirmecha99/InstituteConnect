@@ -6,6 +6,7 @@ import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
 import Header from "../components/Header";
 import { Snackbar, Alert } from "@mui/material";
+import BASE_URL from "../api/config";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/login",
+        `${BASE_URL}/api/login`,
         {
           email,
           password,
@@ -50,7 +51,7 @@ function Login() {
         const decoded = jwtDecode(token);
         console.log("Decoded JWT:", decoded);
 
-        const userRes = await axios.get("http://localhost:3000/api/me", {
+        const userRes = await axios.get("`${BASE_URL}/api/me", {
           withCredentials: true,
         });
 

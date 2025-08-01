@@ -25,7 +25,7 @@ import SendNotifications from "./components/SendNotifications";
 import GetNotifications from "./components/GetNotifications";
 import LandingPage from "./pages/LandingPage";
 import ManageUsers from "./pages/ManageUsers";
-
+import BASE_URL from "./api/config";
 // Wrapper for themed dashboard routes
 const ThemedDashboardRoutes = () => {
   const [theme, colorMode] = useMode();
@@ -82,7 +82,7 @@ const App = () => {
       if (!token) return; // Don't proceed if token is missing
 
       try {
-        const res = await axios.get("http://localhost:3000/api/me", {
+        const res = await axios.get(`${BASE_URL}/api/me`, {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token here
           },

@@ -16,6 +16,7 @@ import { tokens } from "../../../theme";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import TwitterIcon from "@mui/icons-material/Twitter";
+import BASE_URL from "../../../api/config";
 
 const ProfileView = () => {
   const [user, setUser] = useState(null);
@@ -23,7 +24,7 @@ const ProfileView = () => {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/me", {
+      const res = await axios.get(`${BASE_URL}/api/me`, {
         withCredentials: true,
       });
       setUser(res.data.user);
@@ -82,7 +83,6 @@ const ProfileView = () => {
         }}
       >
         <Box display="flex" flexDirection="column" alignItems="center">
-         
           <Typography
             variant="h4"
             sx={{

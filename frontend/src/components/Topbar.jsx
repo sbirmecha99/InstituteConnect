@@ -1,38 +1,39 @@
-import { Badge, Box,Icon,IconButton,useTheme } from "@mui/material"
-import { useContext,useEffect,useState } from "react"
-import { ColorModeContext,themeSettings,tokens } from "../theme"
-import InputBase from "@mui/material/InputBase"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import { useSearch } from "../pages/dashboards/features/SearchContext"
+import { Badge, Box, Icon, IconButton, useTheme } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
+import { ColorModeContext, themeSettings, tokens } from "../theme";
+import InputBase from "@mui/material/InputBase";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSearch } from "../pages/dashboards/features/SearchContext";
+import BASE_URL from "../api/config";
 
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined"
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 
-
 const Topbar = () => {
-    const theme=useTheme();
-    const colors=tokens(theme.palette.mode);
-    const colorMode= useContext(ColorModeContext);
-    const navigate = useNavigate();
-    const{query,setQuery}=useSearch();
-    const [pendingCount,setPendingCount]=useState(0);
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const colorMode = useContext(ColorModeContext);
+  const navigate = useNavigate();
+  const { query, setQuery } = useSearch();
+  const [pendingCount, setPendingCount] = useState(0);
 
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    const role = storedUser?.role;
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const role = storedUser?.role;
 
-    useEffect(()=>{
-      const token=localStorage.getItem("token");
-      axios.get("http://localhost:3000/api/prof/appointments/count",{
-        headers:{Authorization:`Bearer ${token}`},
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get(`${BASE_URL}/api/prof/appointments/count`, {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res)=>setPendingCount(res.data.pending||0))
-      .catch((err)=>console.error("Error fetching appointment count:",err));
-    },[]);
+      .then((res) => setPendingCount(res.data.pending || 0))
+      .catch((err) => console.error("Error fetching appointment count:", err));
+  }, []);
 
   return (
     <Box
@@ -97,7 +98,6 @@ const Topbar = () => {
       </Box>
     </Box>
   );
-  
-}
+};
 
 export default Topbar;

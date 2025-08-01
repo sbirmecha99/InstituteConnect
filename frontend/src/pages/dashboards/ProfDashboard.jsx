@@ -18,6 +18,7 @@ import {
 import dayjs from "dayjs";
 import { tokens } from "../../theme";
 import ProfessorTimetable from "../../components/ProfessorTimetable";
+import BASE_URL from "../../api/config";
 
 const ProfDashboard = () => {
   const theme = useTheme();
@@ -27,12 +28,9 @@ const ProfDashboard = () => {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "http://localhost:3000/api/prof/appointments",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.get(`${BASE_URL}/api/prof/appointments`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setAppointments(res.data.appointments || res.data || []);
     } catch (err) {
       console.error("Error fetching appointments:", err);
@@ -71,7 +69,7 @@ const ProfDashboard = () => {
                     >
                       <strong> Classes for Today</strong>
                     </Typography>
-                    <ProfessorTimetable/>
+                    <ProfessorTimetable />
                   </CardContent>
                 </Card>
               </Grid>

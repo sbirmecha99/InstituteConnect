@@ -4,6 +4,7 @@ import InputField from "../components/InputField";
 import SocialLogin from "../components/SocialLogin";
 import { Snackbar, Alert } from "@mui/material";
 import Header from "../components/Header";
+import BASE_URL from "../api/config";
 
 const Register = () => {
   const [fullName, setFullName] = useState("");
@@ -28,7 +29,7 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/register", {
+      const response = await fetch(`${BASE_URL}/api/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

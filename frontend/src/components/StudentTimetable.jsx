@@ -14,6 +14,7 @@ import {
   Chip,
   useTheme,
 } from "@mui/material";
+import BASE_URL from "../api/config";
 
 const StudentTimetable = () => {
   const theme = useTheme();
@@ -33,13 +34,13 @@ const StudentTimetable = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/student/timetable", {
+      .get(`${BASE_URL}/api/student/timetable`, {
         withCredentials: true,
       })
       .then((res) => {
-        console.log("fetched slots:",res.data);
+        console.log("fetched slots:", res.data);
         setSlots(Array.isArray(res.data) ? res.data : []);
-  })
+      })
       .catch((err) => console.error("Error fetching slots", err))
       .finally(() => setLoading(false));
   }, []);
@@ -50,9 +51,6 @@ const StudentTimetable = () => {
       (slot) => slot.day === day && slot.start_time === timeStart
     );
   };
-  
-  
-  
 
   return (
     <TableContainer

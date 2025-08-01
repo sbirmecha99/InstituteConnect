@@ -49,12 +49,9 @@ const SendNotifications = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:3000/api/prof/notifications",
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get("`${BASE_URL}/api/prof/notifications", {
+        withCredentials: true,
+      });
       if (Array.isArray(res.data)) {
         setMessages(res.data);
       }
@@ -91,7 +88,7 @@ const SendNotifications = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/notifications",
+        `${BASE_URL}/api/notifications`,
         {
           message,
           semester: global ? 0 : Number(semester),
