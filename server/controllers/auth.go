@@ -252,7 +252,8 @@ func Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		HTTPOnly: true,
 		Path:     "/",       
-		Secure:   true,   
+		Secure:   true,  
+		SameSite: "None", 
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
