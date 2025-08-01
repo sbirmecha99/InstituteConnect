@@ -47,7 +47,7 @@ if os.Getenv("RENDER") == "" {
 
 	//cors setup for react
 	app.Use(cors.New(cors.Config{
-	AllowOrigins: "http://localhost:5173,https://instituteconnect.vercel.app,https://institute-connect-shreya-birmechas-projects.vercel.app",
+	AllowOrigins: "http://localhost:5173,https://institute-connect-ojmy5xm70-shreya-birmechas-projects.vercel.app,https://institute-connect-shreya-birmechas-projects.vercel.app",
 	AllowCredentials: true,
 	AllowHeaders: "Origin,Accept,Content-Type,Authorization",
 	AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",
