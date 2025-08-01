@@ -40,9 +40,6 @@ const SocialLogin = () => {
 
         const userRes = await axios.get(`${BASE_URL}/api/me`, {
           withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         });
 
         const fullUser = userRes.data.user;
