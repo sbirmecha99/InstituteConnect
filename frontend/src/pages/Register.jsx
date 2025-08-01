@@ -27,10 +27,11 @@ const Register = () => {
       setSnackbarOpen(true);
       return;
     }
-
+    console.log(email, password);
     try {
       const response = await fetch(`${BASE_URL}/api/register`, {
         method: "POST",
+        
         headers: {
           "Content-Type": "application/json",
         },
