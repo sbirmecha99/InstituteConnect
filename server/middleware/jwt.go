@@ -10,12 +10,8 @@ import (
 
 func JWTProtected() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Get token from Authorization header first
-		token := c.Get("Authorization")
-		if token == "" {
-			// Fallback to cookie if header not present
-			token = c.Cookies("token")
-		}
+			token := c.Cookies("token")
+		
 
 		// Remove "Bearer " prefix if using Authorization header
 		if len(token) > 7 && token[:7] == "Bearer " {

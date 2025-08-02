@@ -40,6 +40,7 @@ func ValidateJWT(tokenStr string) (jwt.MapClaims, error) {
 		}
 		return getJWTSecret(), nil
 	})
+	log.Println(tokenStr)
 
 	if err != nil || !token.Valid {
 		return nil, err
