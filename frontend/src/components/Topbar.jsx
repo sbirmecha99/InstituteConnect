@@ -29,6 +29,7 @@ const Topbar = () => {
     const token = localStorage.getItem("token");
     axios
       .get(`${BASE_URL}/api/prof/appointments/count`, {
+        withCredentials:true,
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setPendingCount(res.data.pending || 0))
