@@ -72,6 +72,7 @@ const ProfAppointments = () => {
             status === "accepted" ? new Date(slot).toISOString() : null,
         },
         {
+          withCredentials:true,
           headers: { Authorization: `Bearer ${token}` },
         }
       );

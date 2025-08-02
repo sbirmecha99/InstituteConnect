@@ -50,6 +50,8 @@ const StudentTimetable = () => {
     return slots.find(
       (slot) => slot.day === day && slot.start_time === timeStart
     );
+     if (slot) console.log("Matched Slot:", { day, timeStart, slot });
+     return slot;
   };
 
   return (
