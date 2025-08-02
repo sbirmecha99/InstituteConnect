@@ -53,13 +53,11 @@ function Login() {
 
         const userRes = await axios.get(`${BASE_URL}/api/me`, {
           withCredentials: true,
-          headers:{
-            Authorization:`Bearer ${token}`
-          }
         });
 
         const fullUser = userRes.data.user;
         localStorage.setItem("user", JSON.stringify(fullUser));
+        console.log("Logged in user:", fullUser);
 
         const role = fullUser.role;
         console.log("User role:", role);
