@@ -59,6 +59,7 @@ const StudentDashboard = () => {
     const fetchAppointments = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/student/appointments`, {
+          withCredentials:true,
           headers: { Authorization: `Bearer ${token}` },
         });
 

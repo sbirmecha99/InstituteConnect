@@ -34,6 +34,7 @@ const ProfAppointments = () => {
       const res = await axios.get(
         `${BASE_URL}/api/prof/appointments`,
         {
+          withCredentials:true,
           headers: { Authorization: `Bearer ${token}` },
         }
       );

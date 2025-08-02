@@ -23,7 +23,7 @@ export const UserProvider = ({ children }) => {
       try {
         const res = await axios.get(`${BASE_URL}/api/register`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
-          withCredentials: !token,
+          withCredentials: true,
         });
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setUser(res.data.user);

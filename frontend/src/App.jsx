@@ -83,6 +83,7 @@ const App = () => {
 
       try {
         const res = await axios.get(`${BASE_URL}/api/me`, {
+          withCredentials: true,
           headers: {
             Authorization: `Bearer ${token}`, // Include the token here
           },

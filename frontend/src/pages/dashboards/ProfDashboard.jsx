@@ -29,6 +29,7 @@ const ProfDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(`${BASE_URL}/api/prof/appointments`, {
+        withCredentials:true,
         headers: { Authorization: `Bearer ${token}` },
       });
       setAppointments(res.data.appointments || res.data || []);
