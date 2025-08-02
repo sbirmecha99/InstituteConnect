@@ -17,6 +17,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import dayjs from "dayjs";
+import BASE_URL from "../api/config";
 
 const departments = ["CSE", "ECE", "ME", "EE", "CE", "CH", "MC", "BT", "MME"];
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
