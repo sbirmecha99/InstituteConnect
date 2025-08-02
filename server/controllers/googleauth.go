@@ -91,12 +91,14 @@ func GoogleLogin(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    token,
+		Path: "/",
 		HTTPOnly: true,
 		Secure:   true, 
 		SameSite: fiber.CookieSameSiteNoneMode,
 	})
 
 	return c.JSON(fiber.Map{
+		"token":token,
 		"email":      user.Email,
 		"name":       user.Name,
 		"role":       user.Role,

@@ -20,6 +20,7 @@ const SocialLogin = () => {
   };
 
   const handleSuccess = async (credentialResponse) => {
+    console.log("Google credential:", credentialResponse.credential);
     try {
       const credential = credentialResponse.credential;
       const res = await axios.post(
