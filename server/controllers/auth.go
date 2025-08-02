@@ -151,6 +151,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 
 func AuthVerify(c *fiber.Ctx) error {
 	tokenStr := c.Cookies("token")
+	log.Println(tokenStr)
 	
 	if tokenStr == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
