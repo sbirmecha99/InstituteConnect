@@ -253,7 +253,7 @@ func Logout(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Path:     "/",       
 		Secure:   true,  
-		SameSite: "None", 
+		SameSite: fiber.CookieSameSiteNoneMode, 
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{

@@ -93,7 +93,7 @@ func GoogleLogin(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Secure:   true, // Set to true in production with HTTPS
-		SameSite: "None",
+		SameSite: fiber.CookieSameSiteNoneMode,
 	})
 
 	return c.JSON(fiber.Map{
