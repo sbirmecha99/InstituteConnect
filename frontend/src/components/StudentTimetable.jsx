@@ -44,15 +44,24 @@ const StudentTimetable = () => {
       .catch((err) => console.error("Error fetching slots", err))
       .finally(() => setLoading(false));
   }, []);
-
+  const convertToIST = (utcTimeStr) => {
+    const [hour, minute] = utcTimeStr.split(":").map(Number);
+    const date = new Date();
+    date.setUTCHours(hour, minute, 0);
+    const ist = new Date(
+      date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    );
+    return ist.toTimeString().slice(0, 5); // e.g., "09:00"
+  };
   const getClassAt = (day, timeStart) => {
     const safeSlots = Array.isArray(slots) ? slots : [];
     const slot = safeSlots.find(
-      (slot) => slot.day === day && slot.start_time === timeStart
+      (slot) => slot.day === day && convertToIST(slot.start_time) === timeStart
     );
     if (slot) console.log("Matched Slot:", { day, timeStart, slot });
     return slot;
   };
+
 
 
   return (
