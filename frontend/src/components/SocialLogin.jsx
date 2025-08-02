@@ -35,6 +35,7 @@ const SocialLogin = () => {
       );
 
       const token = res.data.token;
+      console.log("Response from backend:", res.data);
       if (token) {
         localStorage.setItem("token", token);
 
@@ -55,18 +56,23 @@ const SocialLogin = () => {
 
         switch (role) {
           case "SuperAdmin":
+            console.log("navigating to dean");
             navigate("/dashboard/dean");
             break;
           case "Admin":
+            console.log("navigating to hod");
             navigate("/dashboard/hod");
             break;
           case "Prof":
+            console.log("navigating to prof");
             navigate("/dashboard/professor");
             break;
           case "Student":
+            console.log("navigating to student");
             navigate("/dashboard/student");
             break;
           default:
+            console.log("navigating to dashboard");
             navigate("/dashboard");
         }
         showSnackbar("Google login successful!", "success");
