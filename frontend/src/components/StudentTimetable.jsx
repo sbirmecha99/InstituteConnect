@@ -47,12 +47,13 @@ const StudentTimetable = () => {
 
   const getClassAt = (day, timeStart) => {
     const safeSlots = Array.isArray(slots) ? slots : [];
-    return slots.find(
+    const slot = safeSlots.find(
       (slot) => slot.day === day && slot.start_time === timeStart
     );
-     if (slot) console.log("Matched Slot:", { day, timeStart, slot });
-     return slot;
+    if (slot) console.log("Matched Slot:", { day, timeStart, slot });
+    return slot;
   };
+
 
   return (
     <TableContainer

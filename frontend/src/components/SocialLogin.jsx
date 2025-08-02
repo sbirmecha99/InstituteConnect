@@ -36,7 +36,10 @@ const SocialLogin = () => {
       const token = res.data.token;
       if (token) {
         localStorage.setItem("token", token);
+
+        //decoding to get user role
         const decoded = jwtDecode(token);
+        console.log("Decoded JWT:", decoded);
 
         const userRes = await axios.get(`${BASE_URL}/api/me`, {
           withCredentials: true,
@@ -44,8 +47,11 @@ const SocialLogin = () => {
 
         const fullUser = userRes.data.user;
         localStorage.setItem("user", JSON.stringify(fullUser));
+        console.log("Logged in user:", fullUser);
 
         const role = fullUser.role;
+        console.log("User role:", role);
+
         switch (role) {
           case "SuperAdmin":
             navigate("/dashboard/dean");
