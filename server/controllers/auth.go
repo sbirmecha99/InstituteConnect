@@ -135,6 +135,7 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Path:     "/",
 		Secure: true,
+		SameSite: fiber.CookieSameSiteNoneMode,
 	})
 
 	if strings.Contains(c.Get("Accept"), "application/json") {
