@@ -70,8 +70,6 @@ const StudentDashboard = () => {
         );
 
         setAppointments(filteredAppointments);
-
-        setAppointments(upcoming);
       } catch (err) {
         console.error("Error fetching appointments:", err);
       }
