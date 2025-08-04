@@ -224,13 +224,6 @@ const Sidebar = () => {
                   setSelected={setSelected}
                 />
                 <Item
-                  title="Assigned Rooms"
-                  to="/rooms"
-                  icon={<RoomOutlinedIcon />}
-                  selected={selected}
-                  setSelected={setSelected}
-                />
-                <Item
                   title="Appointments"
                   to="/dashboard/features/prof-appointments"
                   icon={<AccountBoxOutlinedIcon />}
