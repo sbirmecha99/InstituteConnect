@@ -50,7 +50,7 @@ const SendNotifications = () => {
 
   const fetchMessages = async () => {
     try {
-      const res = await axios.get("`${BASE_URL}/api/prof/notifications", {
+      const res = await axios.get(`${BASE_URL}/api/prof/notifications`, {
         withCredentials: true,
       });
       if (Array.isArray(res.data)) {

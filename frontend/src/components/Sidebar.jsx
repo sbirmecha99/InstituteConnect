@@ -15,9 +15,10 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutline";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import defaultPfp from "../assets/guestuser.jpeg";
 import BASE_URL from "../api/config";
 
+const defaultPfp =
+  "https://res.cloudinary.com/dgjkoqlhc/image/upload/v1754141916/Default_pfp.svg_ydt686.png";
 const logout = async () => {
   try {
     await fetch(`${BASE_URL}/api/logout`, {
@@ -134,12 +135,17 @@ const Sidebar = () => {
                 <img
                   src={
                     storedUser?.profile_picture
-                      ? `${BASE_URL}${storedUser.profile_picture}`
+                      ? `${BASE_URL}${
+                          storedUser.profile_picture.startsWith("/") ? "" : "/"
+                        }${storedUser.profile_picture}`
                       : defaultPfp
                   }
                   alt="profile-user"
                   width="100px"
                   height="100px"
+                  onError={(e) => {
+                    e.currentTarget.src = defaultPfp;
+                  }}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>

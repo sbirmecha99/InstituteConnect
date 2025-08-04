@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"instituteconnect/config"
 	"instituteconnect/models"
@@ -76,7 +77,7 @@ func Register(c *fiber.Ctx) error {
 		Email:    input.Email,
 		Password: string(hashed),
 		Role:     models.Role(utils.DetermineRole(input.Email)),
-		ProfilePicture: "/uploads/user.png",
+		ProfilePicture: "https://res.cloudinary.com/dgjkoqlhc/image/upload/v1754141916/Default_pfp.svg_ydt686.png",
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
@@ -207,15 +208,12 @@ func UpdateProfile(c *fiber.Ctx) error {
 
 	file, err := c.FormFile("image")
 	if err == nil {
-		
-filePath := fmt.Sprintf("./uploads/%d_%s", user.ID, file.Filename)
-if err := c.SaveFile(file, filePath); err != nil {
-    return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save image"})
-}
-
-user.ProfilePicture = fmt.Sprintf("/uploads/%d_%s", user.ID, file.Filename)
-
-
+		// Upload to Cloudinary instead of local disk
+		imageURL, err := utils.UploadToCloudinary(context.Background(),file)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to upload image"})
+		}
+		user.ProfilePicture = imageURL
 	}
 
 	// Prepare map of updates
@@ -236,10 +234,11 @@ user.ProfilePicture = fmt.Sprintf("/uploads/%d_%s", user.ID, file.Filename)
 		updates["ProfilePicture"] = user.ProfilePicture
 	}
 
-	if err := config.DB.Model(&user).Updates(updates).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update profile"})
+	if len(updates) > 0 {
+		if err := config.DB.Model(&user).Updates(updates).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to update profile"})
+		}
 	}
-
 	return c.JSON(fiber.Map{
 		"message": "Profile updated successfully",
 	"user":user,
