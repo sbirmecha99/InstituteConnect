@@ -134,11 +134,7 @@ const Sidebar = () => {
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
                   src={
-                    storedUser?.profile_picture
-                      ? `${BASE_URL}${
-                          storedUser.profile_picture.startsWith("/") ? "" : "/"
-                        }${storedUser.profile_picture}`
-                      : defaultPfp
+                    storedUser?.profile_picture || defaultPfp
                   }
                   alt="profile-user"
                   width="100px"

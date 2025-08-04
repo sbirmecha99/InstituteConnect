@@ -40,6 +40,7 @@ func UploadToCloudinary(ctx context.Context, file *multipart.FileHeader) (string
 	if err != nil {
 		return "", err
 	}
+	fmt.Println("Uploaded image URL:", uploadResult.SecureURL)
 
 	return uploadResult.SecureURL, nil
 }
