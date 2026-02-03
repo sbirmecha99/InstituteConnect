@@ -16,9 +16,9 @@ import (
 func main() {
 
 if os.Getenv("RENDER") == "" {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, continuing with environment variables")
-	}
+	if err := godotenv.Overload(); err != nil {
+    log.Println("No .env file found")
+}
 }
 
 
@@ -30,6 +30,7 @@ if os.Getenv("RENDER") == "" {
 		&models.Appointment{},
 		&models.Notification{},
 		&models.TimeSlot{},
+		&models.EmailVerification{},
 	)
 
 	if error1 != nil {
@@ -47,7 +48,7 @@ if os.Getenv("RENDER") == "" {
 
 	//cors setup for react
 	app.Use(cors.New(cors.Config{
-	AllowOrigins:"https://institute-connect-shreya-birmechas-projects.vercel.app",
+	AllowOrigins:"https://institute-connect-shreya-birmechas-projects.vercel.app, http://localhost:5173, http://localhost:3000",
 	AllowCredentials: true,
 	AllowHeaders: "Origin,Accept,Content-Type,Authorization",
 	AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS",

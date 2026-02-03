@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 
 	"instituteconnect/config"
 	"instituteconnect/models"
@@ -50,12 +49,13 @@ func GoogleLogin(c *fiber.Ctx) error {
 	if !ok || email == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Email not found in Google token"})
 	}
-	if !strings.HasSuffix(email, "@nitdgp.ac.in") {
+	/*
+hd, ok := payload.Claims["hd"].(string)
+if !ok || hd != "nitdgp.ac.in" {
     return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-        "error": "Only @nitdgp.ac.in emails are allowed",
+        "error": "Only NIT Durgapur institutional accounts are allowed",
     })
-}
-
+}*/
 	name, _ := payload.Claims["name"].(string)
 
 	db := config.DB
@@ -70,7 +70,8 @@ func GoogleLogin(c *fiber.Ctx) error {
 		user = models.User{
 			Email:          email,
 			Name:           name,
-			Role:           "Student", // Default role, update logic if needed
+			Role:           "Student",
+			IsVerified: true, // Default role, update logic if needed
 			ProfilePicture: "https://res.cloudinary.com/dgjkoqlhc/image/upload/v1754141916/Default_pfp.svg_ydt686.png",
 		}
 		if err := db.Create(&user).Error; err != nil {
@@ -79,6 +80,12 @@ func GoogleLogin(c *fiber.Ctx) error {
 		isNewUser = true
 	} else if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Database error"})
+	}else{
+		if user.GoogleID == "" || !user.IsVerified {
+        user.GoogleID = payload.Subject
+        user.IsVerified = true 
+        db.Save(&user)
+    }
 	}
 
 	// Generate JWT
@@ -86,15 +93,21 @@ func GoogleLogin(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to generate JWT"})
 	}
-
+	isProd := os.Getenv("RENDER") != ""
+	
 	// Set JWT in cookie
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    token,
 		Path: "/",
 		HTTPOnly: true,
-		Secure:   true, 
-		SameSite: fiber.CookieSameSiteNoneMode,
+		Secure:   isProd, 
+		SameSite: func() string {
+            if isProd {
+                return fiber.CookieSameSiteNoneMode
+            }
+            return fiber.CookieSameSiteLaxMode
+        }(),
 	})
 
 	return c.JSON(fiber.Map{

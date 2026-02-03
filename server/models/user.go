@@ -18,6 +18,7 @@ type User struct{
     Password string `gorm:""`
     Role     Role   `gorm:"not null" json:"role"`
     GoogleID string `gorm:"default:null"`
+    IsVerified bool `gorm:"default:false" json:"isVerified"`
 
     ProfilePicture string `json:"profile_picture"`
     Program string `json:"program"`

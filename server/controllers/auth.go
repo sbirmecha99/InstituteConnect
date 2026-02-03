@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -33,11 +34,11 @@ func Register(c *fiber.Ctx) error {
 			"error":"All fields are required",
 		})
 	}
-	if !strings.HasSuffix(strings.ToLower(input.Email), "@nitdgp.ac.in") {
+	/*if !strings.HasSuffix(strings.ToLower(input.Email), "@nitdgp.ac.in") {
 		return c.Status(400).JSON(fiber.Map{
 			"error":"Only @nitdgp.ac.in emails are allowed",
 	})
-	}
+	}*/
 
 	if len(input.Password) < 6 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -77,18 +78,37 @@ func Register(c *fiber.Ctx) error {
 		Email:    input.Email,
 		Password: string(hashed),
 		Role:     models.Role(utils.DetermineRole(input.Email)),
+		IsVerified: false,
 		ProfilePicture: "https://res.cloudinary.com/dgjkoqlhc/image/upload/v1754141916/Default_pfp.svg_ydt686.png",
 	}
 
 	if err := config.DB.Create(&user).Error; err != nil {
 		return c.Status(500).SendString("failed to register user :(")
 	}
+	// --- EMAIL VERIFICATION LOGIC START ---
+    token := utils.GenerateSecureToken()
+    verification := models.EmailVerification{
+        UserID:    user.ID,
+        Token:     token,
+        ExpiresAt: time.Now().Add(24 * time.Hour),
+    }
+    config.DB.Create(&verification)
 
-	// Optional: return JSON or redirect based on frontend
-	return c.JSON(fiber.Map{
-		"message": "registration successful",
-		"user":    user,
-	})
+    // Construct link (Update your domain for production)
+    verifyURL := fmt.Sprintf("http://localhost:3000/verify-email?token=%s", token)
+    
+    emailData := utils.EmailData{
+        Name:      user.Name,
+        VerifyURL: verifyURL,
+    }
+
+    // Fire and forget (or handle error log)
+    go utils.SendVerificationEmail(user.Email, emailData)
+    // --- EMAIL VERIFICATION LOGIC END ---
+
+    return c.JSON(fiber.Map{
+        "message": "Registration successful! Please check your email to verify your account.",
+    })
 }
 
 //email password login
@@ -115,6 +135,11 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 		  })
 		  
 	}
+	if !user.IsVerified {
+        return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+            "error": "Please verify your email before logging in.",
+        })
+    }
 
 	if !utils.CheckPasswordHash(input.Password, user.Password) {
 		log.Println("Incorrect password")
@@ -129,14 +154,22 @@ func EmailPasswordLogin(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString("failed to generate token")
 	}
+	
+	isProd := os.Getenv("RENDER") != ""
+
 	//redircet or send token
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    token,
 		HTTPOnly: true,
 		Path:     "/",
-		Secure: true,
-		SameSite: fiber.CookieSameSiteNoneMode,
+		Secure: isProd,
+		SameSite: func() string {
+            if isProd {
+                return fiber.CookieSameSiteNoneMode
+            }
+            return fiber.CookieSameSiteLaxMode
+        }(),
 	})
 
 	if strings.Contains(c.Get("Accept"), "application/json") {
@@ -246,6 +279,8 @@ func UpdateProfile(c *fiber.Ctx) error {
 }
 func Logout(c *fiber.Ctx) error {
 
+	isProd := os.Getenv("RENDER") != ""
+
 	c.Cookie(&fiber.Cookie{
 		Name:     "token",
 		Value:    "",
@@ -253,8 +288,13 @@ func Logout(c *fiber.Ctx) error {
 		MaxAge:   -1,
 		HTTPOnly: true,
 		Path:     "/",       
-		Secure:   true,  
-		SameSite: fiber.CookieSameSiteNoneMode, 
+		Secure:   isProd,  
+		SameSite: func() string {
+            if isProd {
+                return fiber.CookieSameSiteNoneMode
+            }
+            return fiber.CookieSameSiteLaxMode
+        }(), 
 	})
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -262,3 +302,73 @@ func Logout(c *fiber.Ctx) error {
 	})
 }
 
+func VerifyEmail(c *fiber.Ctx) error {
+    token := c.Query("token")
+    if token == "" {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid token"})
+    }
+	// 1. Get your frontend URL from env (or default to localhost)
+    frontendURL := os.Getenv("FRONTEND_URL")
+    if frontendURL == "" {
+        frontendURL = "http://localhost:5173" 
+    }
+
+    var verification models.EmailVerification
+    // Find valid token
+    err := config.DB.Where("token = ? AND expires_at > ?", token, time.Now()).First(&verification).Error
+    if err != nil {
+        // Redirect with an expired flag instead of just a 400 error
+        return c.Redirect(frontendURL + "/login?verified=expired")
+    }
+
+
+    // Start Transaction
+    tx := config.DB.Begin()
+    
+    // 1. Mark user as verified
+    if err := tx.Model(&models.User{}).Where("id = ?", verification.UserID).Update("is_verified", true).Error; err != nil {
+        tx.Rollback()
+        return c.Status(500).JSON(fiber.Map{"error": "Verification failed"})
+    }
+
+    // 2. Delete the token
+    tx.Delete(&verification)
+    tx.Commit()
+
+    
+
+    // 2. Redirect the user to your login page
+    return c.Redirect(frontendURL + "/login?verified=true")
+}
+func ResendVerification(c *fiber.Ctx) error {
+    var input struct {
+        Email string `json:"email"`
+    }
+    if err := c.BodyParser(&input); err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
+    }
+
+    var user models.User
+    if err := config.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
+        // For security, don't reveal if the email exists or not
+        return c.JSON(fiber.Map{"message": "If that email exists, a new link has been sent."})
+    }
+
+    if user.IsVerified {
+        return c.Status(400).JSON(fiber.Map{"error": "Account already verified"})
+    }
+
+    // Generate new token and send email
+    token := utils.GenerateSecureToken()
+    verification := models.EmailVerification{
+        UserID:    user.ID,
+        Token:     token,
+        ExpiresAt: time.Now().Add(24 * time.Hour),
+    }
+    config.DB.Create(&verification)
+
+    verifyURL := fmt.Sprintf("http://localhost:3000/verify-email?token=%s", token)
+    go utils.SendVerificationEmail(user.Email, utils.EmailData{Name: user.Name, VerifyURL: verifyURL})
+
+    return c.JSON(fiber.Map{"message": "Verification email resent!"})
+}

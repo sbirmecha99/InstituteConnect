@@ -46,10 +46,10 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSnackbarMessage("Registered successfully!");
+        setSnackbarMessage("Registered successfully! Please check your email to verify your account.");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);
-        setTimeout(() => navigate("/login"), 1500); // wait before redirect
+        setTimeout(() => navigate("/login"), 2500); // wait before redirect
       } else {
         setSnackbarMessage(data?.error || "Registration failed!");
         setSnackbarSeverity("error");
