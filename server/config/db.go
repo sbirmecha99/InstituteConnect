@@ -41,6 +41,8 @@ func ConnectDatabase() {
     if err := sqlDB.Ping(); err != nil {
         log.Fatalf("Handshake failed! Database unreachable: %v", err)
     }
+    sqlDB.SetMaxOpenConns(20) 
+    sqlDB.SetMaxIdleConns(10)
 
     log.Println("Connected to NeonDB")
 }
